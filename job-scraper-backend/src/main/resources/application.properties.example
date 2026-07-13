@@ -1,0 +1,10 @@
+gemini.api.key=your_gemini_key_here
+gemini.api.base-url=https://generativelanguage.googleapis.com
+gemini.api.model=gemini-flash-latest
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/jobscraper
+spring.datasource.username=your_db_username
+spring.datasource.password=your_db_password
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
