@@ -25,8 +25,13 @@ public class JobsController {
             @RequestParam String sourceType,
             @RequestParam String url,
             @RequestParam String company) throws Exception {
+        System.out.println("Url from client :"+url);
 
         return jobService.fetchFromSource(sourceType, url, company);
     }
+
+//    @GetMapping
+//    public List<JobDto> getAllJobs(){}
+
 
 }
