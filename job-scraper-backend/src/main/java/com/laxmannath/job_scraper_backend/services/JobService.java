@@ -2,10 +2,8 @@ package com.laxmannath.job_scraper_backend.services;
 
 
 import com.laxmannath.job_scraper_backend.dtos.JobDto;
-import com.laxmannath.job_scraper_backend.models.Job;
 import com.laxmannath.job_scraper_backend.models.Source;
-import com.laxmannath.job_scraper_backend.repository.JobRepository;
-import com.laxmannath.job_scraper_backend.repository.SourceRepository;
+
 import com.laxmannath.job_scraper_backend.services.fetcher.JobFetcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +15,7 @@ import java.util.List;
 public class JobService {
 
     private final List<JobFetcher> fetchers; // Spring injects ALL JobFetcher beans automatically
-    private final SourceRepository sourceRepository;
+    private final SourceService sourceService;
     private final JobPersistenceService jobPersistenceService;
 
 
@@ -31,8 +29,7 @@ public class JobService {
     }
     public List<JobDto> crawlSource(Long sourceId) {
         try {
-            Source source = sourceRepository.findById(sourceId)
-                    .orElseThrow(() -> new IllegalArgumentException("Source not found: " + sourceId));
+            Source source = sourceService.getSourceById(sourceId);
 
             JobFetcher fetcher = fetchers.stream()
                     .filter(f -> f.supports(source.getSourceType()))
@@ -45,20 +42,20 @@ public class JobService {
             source.setJobsFoundLastRun(jobs.size());
             source.setLastCrawledAt(java.time.LocalDateTime.now());
             source.setLastError(null);
-            sourceRepository.save(source);
+            sourceService.createSource(source);
             return jobs;
 
         } catch (Exception e) {
-            System.err.println("Crawl failed for source " + sourceId + ": " + e.getMessage());
+            System.err.println("Crawl failed for source " + sourceId + ": " + e);
             return List.of();
         }
     }
 
     public void crawlAllEnabledSources() {
-        List<Source> sources = sourceRepository.findAll().stream()
+        List<Source> sources = sourceService.getAllSources().stream()
                 .filter(Source::getEnabled)
                 .toList();
-
+System.out.println("Sources to be crawled :"+sources);
         for (Source source : sources) {
             crawlSource(source.getId());
         }

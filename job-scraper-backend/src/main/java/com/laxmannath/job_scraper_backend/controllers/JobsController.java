@@ -29,6 +29,11 @@ public class JobsController {
 
         return jobService.fetchFromSource(sourceType, url, company);
     }
+    @GetMapping("/crawl")
+    public void crawlJobs(){
+       jobService. crawlAllEnabledSources();
+    }
+
 
 //    @GetMapping
 //    public List<JobDto> getAllJobs(){}
