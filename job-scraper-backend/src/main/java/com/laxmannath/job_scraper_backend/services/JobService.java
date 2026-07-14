@@ -2,8 +2,10 @@ package com.laxmannath.job_scraper_backend.services;
 
 
 import com.laxmannath.job_scraper_backend.dtos.JobDto;
+import com.laxmannath.job_scraper_backend.models.Job;
 import com.laxmannath.job_scraper_backend.models.Source;
 
+import com.laxmannath.job_scraper_backend.repository.JobRepository;
 import com.laxmannath.job_scraper_backend.services.fetcher.JobFetcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ public class JobService {
     private final List<JobFetcher> fetchers; // Spring injects ALL JobFetcher beans automatically
     private final SourceService sourceService;
     private final JobPersistenceService jobPersistenceService;
+    private final JobRepository jobRepository;
 
 
     public List<JobDto> fetchFromSource(String sourceType, String url, String companyName) throws Exception {
@@ -61,8 +64,15 @@ System.out.println("Sources to be crawled :"+sources);
         }
     }
 
-//    public List<JobDto> getAllJobs(){
-//        List<Job>=JobRepository.findAll();
-//    }
+
+
+    public List<Job> getAllJobs(){
+        return jobRepository.findAll();
+    }
+
+    public Long getTotalNoOfJobs(){
+        return jobRepository.count();
+    }
+
 
 }

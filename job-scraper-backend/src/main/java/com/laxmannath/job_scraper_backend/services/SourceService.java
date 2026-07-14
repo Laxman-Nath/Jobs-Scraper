@@ -49,4 +49,8 @@ public class SourceService {
                 .filter(Source::getEnabled)
                 .toList();
     }
+
+    public Long getTotalNoOfSources(){
+        return sourceRepository.count();
+    }
 }

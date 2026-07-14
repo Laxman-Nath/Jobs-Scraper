@@ -1,6 +1,7 @@
 package com.laxmannath.job_scraper_backend.controllers;
 
 import com.laxmannath.job_scraper_backend.dtos.JobDto;
+import com.laxmannath.job_scraper_backend.models.Job;
 import com.laxmannath.job_scraper_backend.services.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,10 +34,13 @@ public class JobsController {
     public void crawlJobs(){
        jobService. crawlAllEnabledSources();
     }
+    @GetMapping
+    public List<Job> getAllJobs(){
+        return jobService.getAllJobs();
+    }
 
 
-//    @GetMapping
-//    public List<JobDto> getAllJobs(){}
+
 
 
 }
