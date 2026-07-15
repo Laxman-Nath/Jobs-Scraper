@@ -1,11 +1,14 @@
 import { apiClient } from "./client";
 import { Source } from "../types/source";
+import { PagedResponse } from "../types/paged";
 
-export async function getSources(): Promise<Source[]> {
-  const { data } = await apiClient.get<Source[]>("/admin/sources");
-  console.log("Fetched sources:", data); // Debugging log
+export async function getSources(pageNo = 1, pageSize = 20): Promise<PagedResponse<Source>> {
+  const { data } = await apiClient.get<PagedResponse<Source>>(
+    `/admin/sources?pageNo=${pageNo}&pageSize=${pageSize}`
+  );
   return data;
 }
+
 
 export async function createSource(payload: Partial<Source>): Promise<Source> {
   const { data } = await apiClient.post<Source>("/admin/sources", payload);

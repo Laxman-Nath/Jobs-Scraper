@@ -1,16 +1,20 @@
-import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import { Footer } from "./components/Footer";
+import { Header } from "./components/Header";
 
-const fraunces = Fraunces({
+
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600"],
+  weight: ["500", "600", "700"],
 });
 
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-body",
+  weight: ["400", "500", "600"],
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -22,8 +26,12 @@ const plexMono = IBM_Plex_Mono({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${fraunces.variable} ${inter.variable} ${plexMono.variable} font-body bg-[#FAFAF7] text-[#12151C]`}>
-        <Providers>{children}</Providers>
+      <body className={`${bricolage.variable} ${jakarta.variable} ${plexMono.variable} font-body bg-base text-ink flex flex-col min-h-screen`}>
+        <Providers>
+          <Header />
+          <div className="flex-1">{children}</div>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
