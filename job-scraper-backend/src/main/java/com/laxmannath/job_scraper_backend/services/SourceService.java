@@ -1,9 +1,15 @@
 package com.laxmannath.job_scraper_backend.services;
 
 
+import com.laxmannath.job_scraper_backend.dtos.PagedResponse;
 import com.laxmannath.job_scraper_backend.models.Source;
+import com.laxmannath.job_scraper_backend.pagination.Pagination;
+import com.laxmannath.job_scraper_backend.pagination.PaginationDefaults;
+import com.laxmannath.job_scraper_backend.pagination.PaginationUtil;
 import com.laxmannath.job_scraper_backend.repository.SourceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +19,7 @@ import java.util.List;
 public class SourceService {
 
     private final SourceRepository sourceRepository;
+    private final PaginationDefaults paginationDefaults;
 
     public Source createSource(Source source) {
         source.setEnabled(true);
@@ -52,5 +59,12 @@ public class SourceService {
 
     public Long getTotalNoOfSources(){
         return sourceRepository.count();
+    }
+
+    public PagedResponse<Source> listSourcesPaginated(Pagination pagination) {
+        pagination = paginationDefaults.applyDefaults(pagination);
+        Pageable pageable = PaginationUtil.performPagination(pagination);
+        Page<Source> result = sourceRepository.findAll(pageable);
+        return new PagedResponse<>(result);
     }
 }

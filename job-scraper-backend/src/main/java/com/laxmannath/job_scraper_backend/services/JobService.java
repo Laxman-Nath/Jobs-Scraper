@@ -2,12 +2,18 @@ package com.laxmannath.job_scraper_backend.services;
 
 
 import com.laxmannath.job_scraper_backend.dtos.JobDto;
+import com.laxmannath.job_scraper_backend.dtos.PagedResponse;
+import com.laxmannath.job_scraper_backend.pagination.Pagination;
+import com.laxmannath.job_scraper_backend.pagination.PaginationDefaults;
 import com.laxmannath.job_scraper_backend.models.Job;
 import com.laxmannath.job_scraper_backend.models.Source;
 
+import com.laxmannath.job_scraper_backend.pagination.PaginationUtil;
 import com.laxmannath.job_scraper_backend.repository.JobRepository;
 import com.laxmannath.job_scraper_backend.services.fetcher.JobFetcher;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +26,7 @@ public class JobService {
     private final SourceService sourceService;
     private final JobPersistenceService jobPersistenceService;
     private final JobRepository jobRepository;
+    private final PaginationDefaults paginationDefaults;
 
 
     public List<JobDto> fetchFromSource(String sourceType, String url, String companyName) throws Exception {
@@ -68,6 +75,13 @@ System.out.println("Sources to be crawled :"+sources);
 
     public List<Job> getAllJobs(){
         return jobRepository.findAll();
+    }
+
+    public PagedResponse<Job> listJobsPaginated(Pagination pagination) {
+        pagination = paginationDefaults.applyDefaults(pagination);
+        Pageable pageable = PaginationUtil.performPagination(pagination);
+        Page<Job> result = jobRepository.findByStatus("active", pageable);
+        return new PagedResponse<>(result);
     }
 
     public Long getTotalNoOfJobs(){

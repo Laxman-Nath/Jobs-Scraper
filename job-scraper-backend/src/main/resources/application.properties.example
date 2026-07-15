@@ -12,3 +12,8 @@ spring.jpa.hibernate.ddl-auto=update
 jwt.secret=your_jwt_secret
 jwt.expiration-ms=access_token_expiration_time
 jwt.refresh-expiration-ms=refresh_token_expiration_time
+
+pagination.default-page-size=10
+pagination.max-page-size=100
+pagination.default-sort-parameter=createdAt
+pagination.default-sorting-order=descending

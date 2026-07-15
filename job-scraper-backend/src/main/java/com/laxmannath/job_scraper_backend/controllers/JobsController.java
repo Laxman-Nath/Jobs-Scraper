@@ -1,13 +1,12 @@
 package com.laxmannath.job_scraper_backend.controllers;
 
 import com.laxmannath.job_scraper_backend.dtos.JobDto;
+import com.laxmannath.job_scraper_backend.dtos.PagedResponse;
 import com.laxmannath.job_scraper_backend.models.Job;
+import com.laxmannath.job_scraper_backend.pagination.Pagination;
 import com.laxmannath.job_scraper_backend.services.JobService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,8 +34,8 @@ public class JobsController {
        jobService. crawlAllEnabledSources();
     }
     @GetMapping
-    public List<Job> getAllJobs(){
-        return jobService.getAllJobs();
+    public PagedResponse<Job> getAllJobs(@ModelAttribute  Pagination pagination){
+        return jobService.listJobsPaginated(pagination);
     }
 
 

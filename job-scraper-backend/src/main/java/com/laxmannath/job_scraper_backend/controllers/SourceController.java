@@ -1,7 +1,9 @@
 package com.laxmannath.job_scraper_backend.controllers;
 
 
+import com.laxmannath.job_scraper_backend.dtos.PagedResponse;
 import com.laxmannath.job_scraper_backend.models.Source;
+import com.laxmannath.job_scraper_backend.pagination.Pagination;
 import com.laxmannath.job_scraper_backend.services.SourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +23,8 @@ public class SourceController {
     }
 
     @GetMapping
-    public List<Source> listSources() {
-        return sourceService.getAllSources();
+    public PagedResponse<Source> listSources(@ModelAttribute Pagination pagination) {
+        return sourceService.listSourcesPaginated(pagination);
     }
 
     @GetMapping("/{id}")
