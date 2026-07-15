@@ -1,0 +1,49 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'job-scraper-frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'job-scraper-frontend/**'
+
+jobs:
+  frontend:
+    name: Build Next.js
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: job-scraper-frontend
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: job-scraper-frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+# for testing
+      # - name: Test
+      #   run: npm test
