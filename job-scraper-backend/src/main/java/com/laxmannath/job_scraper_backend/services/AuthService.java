@@ -9,6 +9,8 @@ import com.laxmannath.job_scraper_backend.models.RefreshToken;
 import com.laxmannath.job_scraper_backend.models.User;
 import com.laxmannath.job_scraper_backend.repository.UserRepository;
 import com.laxmannath.job_scraper_backend.security.JwtUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final JwtUtil jwtUtil;
-    public AuthSuccessResponse register( RegisterRequest request) {
+    public AuthSuccessResponse register( RegisterRequest request,HttpServletResponse response) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already registered");
         }
@@ -31,10 +33,10 @@ public class AuthService {
         user.setRole(Role.USER);
         userRepository.save(user);
 
-        return buildAuthResponse(user);
+        return buildAuthResponse(user, response);
     }
 
-    public AuthSuccessResponse login(LoginRequest request) {
+    public AuthSuccessResponse login(LoginRequest request,HttpServletResponse response) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
 
@@ -42,26 +44,46 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        return buildAuthResponse(user);
+        return buildAuthResponse(user, response);
     }
 
-    public void logout(RefreshRequest request) {
-        refreshTokenService.revoke(request.getRefreshToken());
+    public void logout(String refreshTokenValue,HttpServletResponse response) {
+        if (refreshTokenValue != null) {
+            refreshTokenService.revoke(refreshTokenValue);
+        }
+
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // expires immediately, clears the cookie
+        response.addCookie(cookie);
     }
 
-    public AuthSuccessResponse refresh(RefreshRequest refreshRequest){
-        RefreshToken refreshToken = refreshTokenService.validateAndGet(refreshRequest.getRefreshToken());
+    public AuthSuccessResponse refresh(String refreshTokenValue,HttpServletResponse response){
+        if (refreshTokenValue == null) {
+            throw new IllegalArgumentException("No refresh token provided");
+        }
+
+        RefreshToken refreshToken = refreshTokenService.validateAndGet(refreshTokenValue);
         User user = refreshToken.getUser();
 
         String newAccessToken = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        return new AuthSuccessResponse(newAccessToken, user.getEmail(), user.getRole().name());
 
-        return new AuthSuccessResponse(newAccessToken,refreshToken.getToken(), user.getEmail(), user.getRole().name());
     }
 
-    private AuthSuccessResponse buildAuthResponse(User user) {
+    private AuthSuccessResponse buildAuthResponse(User user, HttpServletResponse response) {
         String accessToken = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
-        return new AuthSuccessResponse(accessToken, refreshToken.getToken(), user.getEmail(), user.getRole().name());
+
+        Cookie cookie = new Cookie("refreshToken", refreshToken.getToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false); // set true in production (requires HTTPS)
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        response.addCookie(cookie);
+
+        return new AuthSuccessResponse(accessToken, user.getEmail(), user.getRole().name());
     }
 
 }
