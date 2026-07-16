@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -61,10 +62,17 @@ public class SourceService {
         return sourceRepository.count();
     }
 
-    public PagedResponse<Source> listSourcesPaginated(Pagination pagination) {
+    public PagedResponse<Source> listSourcesPaginated(Pagination pagination,String searchQuery) {
         pagination = paginationDefaults.applyDefaults(pagination);
         Pageable pageable = PaginationUtil.performPagination(pagination);
-        Page<Source> result = sourceRepository.findAll(pageable);
+
+        Page<Source> result;
+        if (StringUtils.hasText(searchQuery)) {
+            result = sourceRepository.searchSources(searchQuery.trim(), pageable);
+        } else {
+            result = sourceRepository.findAll(pageable);
+        }
+
         return new PagedResponse<>(result);
     }
 }

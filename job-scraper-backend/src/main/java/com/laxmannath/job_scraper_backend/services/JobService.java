@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -77,10 +78,17 @@ System.out.println("Sources to be crawled :"+sources);
         return jobRepository.findAll();
     }
 
-    public PagedResponse<Job> listJobsPaginated(Pagination pagination) {
+    public PagedResponse<Job> listJobsPaginated(Pagination pagination,String searchQuery) {
         pagination = paginationDefaults.applyDefaults(pagination);
         Pageable pageable = PaginationUtil.performPagination(pagination);
-        Page<Job> result = jobRepository.findByStatus("active", pageable);
+
+        Page<Job> result;
+        if (StringUtils.hasText(searchQuery)) {
+            result = jobRepository.searchJobs(searchQuery.trim(), pageable);
+        } else {
+            result = jobRepository.findByStatus("active", pageable);
+        }
+
         return new PagedResponse<>(result);
     }
 

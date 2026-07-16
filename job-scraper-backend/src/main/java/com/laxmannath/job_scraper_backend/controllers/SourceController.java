@@ -8,7 +8,6 @@ import com.laxmannath.job_scraper_backend.services.SourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/admin/sources")
@@ -23,8 +22,8 @@ public class SourceController {
     }
 
     @GetMapping
-    public PagedResponse<Source> listSources(@ModelAttribute Pagination pagination) {
-        return sourceService.listSourcesPaginated(pagination);
+    public PagedResponse<Source> listSources(@ModelAttribute Pagination pagination,@RequestParam(required = false) String q) {
+        return sourceService.listSourcesPaginated(pagination,q);
     }
 
     @GetMapping("/{id}")

@@ -34,8 +34,8 @@ public class JobsController {
        jobService. crawlAllEnabledSources();
     }
     @GetMapping
-    public PagedResponse<Job> getAllJobs(@ModelAttribute  Pagination pagination){
-        return jobService.listJobsPaginated(pagination);
+    public PagedResponse<Job> getAllOrSearchJobs(@ModelAttribute  Pagination pagination,@RequestParam(required = false) String q){
+        return jobService.listJobsPaginated(pagination,q);
     }
 
 
