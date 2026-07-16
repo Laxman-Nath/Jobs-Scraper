@@ -2,77 +2,59 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
-import { getUserRole } from "@/lib/utils/tokenStore";
+import { LoginFormValues, loginSchema } from "@/lib/validations/authSchema";
+import { AuthCard } from "../components/auth/AuthCard";
+import { AuthFormField } from "../components/auth/AuthFormField";
+
 
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  async function onSubmit(data: LoginFormValues) {
+    setServerError("");
     try {
-      await login(email, password);
-      if (getUserRole()?.toLowerCase() === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/");
-      }
+      await login(data.email, data.password);
+      router.push("/");
     } catch {
-      setError("Invalid email or password.");
-    } finally {
-      setLoading(false);
+      setServerError("Invalid email or password.");
     }
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        <h1 className="font-display text-3xl text-ink mb-8">Log in</h1>
+    <AuthCard
+      title="Welcome back"
+      subtitle="Log in to continue."
+      footerText="No account?"
+      footerLinkText="Sign up"
+      footerLinkHref="/register"
+    >
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
+        <AuthFormField label="Email" type="email" placeholder="you@example.com" registration={register("email")} error={errors.email?.message} />
+        <AuthFormField label="Password" type="password" placeholder="••••••••" registration={register("password")} error={errors.password?.message} />
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="bg-transparent border-b border-line focus:border-ink outline-none py-2 text-sm"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="bg-transparent border-b border-line focus:border-ink outline-none py-2 text-sm"
-            required
-          />
+        {serverError && (
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-rust text-sm bg-rust/5 border border-rust/20 rounded-lg px-3 py-2">
+            {serverError}
+          </motion.p>
+        )}
 
-          {error && <p className="text-rust text-sm font-mono">{error}</p>}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="font-mono text-xs uppercase tracking-wide border border-ink px-4 py-3 hover:bg-ink hover:text-base transition-colors disabled:opacity-40 mt-2"
-          >
-            {loading ? "Logging in..." : "Log in"}
-          </button>
-        </form>
-
-        <p className="text-muted text-sm mt-6">
-          No account?{" "}
-          <Link href="/register" className="text-ink underline underline-offset-4">
-            Register
-          </Link>
-        </p>
-      </div>
-    </main>
+        <Button type="submit" disabled={isSubmitting} className="h-12 rounded-xl bg-ink text-base hover:bg-ink/90 mt-2 group cursor-pointer">
+          {isSubmitting ? "Logging in..." : "Log in"}
+          {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />}
+        </Button>
+      </form>
+    </AuthCard>
   );
 }
