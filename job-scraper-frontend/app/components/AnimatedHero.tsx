@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
@@ -16,6 +17,17 @@ const fadeUp = {
 };
 
 export function AnimatedHero({ totalJobs }: { totalJobs: number }) {
+  const [query, setQuery] = useState("");
+  const router = useRouter();
+
+  function handleSearch() {
+    router.push(query.trim() ? `/jobs?q=${encodeURIComponent(query.trim())}` : "/jobs");
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter") handleSearch();
+  }
+
   return (
     <section className="px-6 md:px-12 pt-20 md:pt-28 pb-16">
       <div className="max-w-5xl mx-auto">
@@ -64,14 +76,19 @@ export function AnimatedHero({ totalJobs }: { totalJobs: number }) {
           className="flex flex-col sm:flex-row gap-3 mt-10 max-w-xl"
         >
           <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="Search by title, company, or location..."
-            className="h-14 bg-white border-line text-base rounded-xl px-5"
+            className="h-14 bg-white border-line text-black rounded-xl px-5"
           />
-          <Button asChild size="lg" className="h-14 px-8 rounded-xl bg-ink text-base hover:bg-ink/90 text-white group">
-            <Link href="/jobs">
-              Search
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
+          <Button
+            onClick={handleSearch}
+            size="lg"
+            className="h-14 px-8 rounded-xl bg-ink cursor-pointer hover:bg-ink/90 text-white group"
+          >
+            Search
+            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </motion.div>
 

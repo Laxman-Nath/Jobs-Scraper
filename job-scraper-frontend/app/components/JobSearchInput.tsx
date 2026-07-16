@@ -15,7 +15,7 @@ export function JobSearchInput({ value, onChange, className = "" }: JobSearchInp
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search by title, company, or location..."
-        className="h-12 pl-11 bg-white border-line rounded-xl text-base"
+        className="h-12 pl-11 bg-white border-line rounded-xl text-black"
       />
     </div>
   );

@@ -2,10 +2,10 @@ import { apiClient } from "./client";
 import { Source } from "../types/source";
 import { PagedResponse } from "../types/paged";
 
-export async function getSources(pageNo = 1, pageSize = 20): Promise<PagedResponse<Source>> {
-  const { data } = await apiClient.get<PagedResponse<Source>>(
-    `/admin/sources?pageNo=${pageNo}&pageSize=${pageSize}`
-  );
+export async function getSources(pageNo = 1, pageSize = 20, q?: string): Promise<PagedResponse<Source>> {
+  const params = new URLSearchParams({ pageNo: String(pageNo), pageSize: String(pageSize) });
+  if (q) params.set("q", q);
+  const { data } = await apiClient.get<PagedResponse<Source>>(`/admin/sources?${params.toString()}`);
   return data;
 }
 

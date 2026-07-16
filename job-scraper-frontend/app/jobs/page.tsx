@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
 import { getJobs } from "@/lib/api/jobs";
 
 import Pagination from "../components/Pagination";
@@ -9,57 +11,78 @@ import { JobSearchInput } from "../components/JobSearchInput";
 import { JobList } from "../components/JobList";
 
 export default function JobsPage() {
-  const [search, setSearch] = useState("");
-  const [pageNo, setPageNo] = useState(1);
-  const pageSize = 20;
+  return (
+    <Suspense fallback={<div className="p-12 font-mono text-sm text-muted">Loading...</div>}>
+      <JobsPageContent />
+    </Suspense>
+  );
+}
+
+function JobsPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // These are read fresh from the URL on every render — no separate state, nothing to sync
+  const search = searchParams.get("q") ?? "";
+  const pageNo = Number(searchParams.get("pageNo") ?? "1");
+  const pageSize =10;
+
+  // Only the input's displayed text needs local state, for instant typing feedback
+  const [searchInput, setSearchInput] = useState(search);
+
+  const debouncedUpdateUrl = useDebouncedCallback((value: string) => {
+    const params = new URLSearchParams();
+    if (value) params.set("q", value);
+    router.replace(`/jobs?${params.toString()}`);
+  }, 400);
+
+  function handleSearchChange(value: string) {
+    setSearchInput(value);
+    debouncedUpdateUrl(value);
+  }
+
+  function handlePageChange(newPageNo: number) {
+    const params = new URLSearchParams();
+    if (search) params.set("q", search);
+    params.set("pageNo", String(newPageNo));
+    router.replace(`/jobs?${params.toString()}`);
+  }
 
   const { data: jobsPage, isLoading, isError } = useQuery({
-    queryKey: ["jobs", pageNo],
-    queryFn: () => getJobs(pageNo, pageSize),
+    queryKey: ["jobs", pageNo, search],
+    queryFn: () => getJobs(pageNo, pageSize, search),
   });
-
-  const filteredJobs = jobsPage?.content.filter((job) => {
-    const query = search.toLowerCase();
-    return (
-      job.title.toLowerCase().includes(query) ||
-      job.company.toLowerCase().includes(query) ||
-      (job.location ?? "").toLowerCase().includes(query)
-    );
-  }) ?? [];
 
   return (
     <main className="min-h-screen">
       <header className="px-6 md:px-12 pt-14 pb-8">
         <div className="max-w-5xl mx-auto">
           <h1 className="font-display font-semibold text-4xl text-ink mb-6">All jobs</h1>
-          <JobSearchInput value={search} onChange={setSearch} className="max-w-xl" />
+          <JobSearchInput value={searchInput} onChange={handleSearchChange} className="max-w-xl" />
           {jobsPage && (
-            <p className="font-mono text-xs text-muted mt-3">{jobsPage.totalElements} jobs tracked</p>
+            <p className="font-mono text-xs text-muted mt-3">
+              {jobsPage.totalElements} {search ? "matching" : "total"} jobs
+            </p>
           )}
         </div>
       </header>
 
       <section className="max-w-5xl mx-auto px-6 md:px-12 pb-16">
         {isLoading && <JobListSkeleton />}
-
         {isError && (
           <div className="border border-dashed border-rust/30 rounded-2xl py-16 text-center bg-rust/5">
             <p className="text-rust font-mono text-sm">Couldn't load jobs. Is the backend running?</p>
           </div>
         )}
-
-        {!isLoading && !isError && (
+        {!isLoading && !isError && jobsPage && (
           <>
-            <JobList jobs={filteredJobs} emptyMessage="No jobs match your search." />
-            {jobsPage && (
-              <div className="mt-8">
-                <Pagination
-                  page={jobsPage.page}
-                  totalPages={jobsPage.totalPages}
-                  onPageChange={(newPageNo) => setPageNo(newPageNo)}
-                />
-              </div>
-            )}
+            <JobList
+              jobs={jobsPage.content}
+              emptyMessage={search ? "No jobs match your search." : "No jobs found yet."}
+            />
+            <div className="mt-8">
+              <Pagination page={jobsPage.page} totalPages={jobsPage.totalPages} onPageChange={handlePageChange} />
+            </div>
           </>
         )}
       </section>
