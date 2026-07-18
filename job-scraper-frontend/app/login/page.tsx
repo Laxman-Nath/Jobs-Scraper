@@ -10,7 +10,8 @@ import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 import { LoginFormValues, loginSchema } from "@/lib/validations/authSchema";
 import { AuthCard } from "../components/auth/AuthCard";
-import { AuthFormField } from "../components/auth/AuthFormField";
+import { FormField } from "../components/FormField";
+import { getUserRole } from "@/lib/utils/tokenStore";
 
 
 export default function LoginPage() {
@@ -26,7 +27,12 @@ export default function LoginPage() {
     setServerError("");
     try {
       await login(data.email, data.password);
+      if(getUserRole() === "ADMIN") {
+        router.push("/admin");
+      }
+      else{
       router.push("/");
+      }
     } catch {
       setServerError("Invalid email or password.");
     }
@@ -41,8 +47,8 @@ export default function LoginPage() {
       footerLinkHref="/register"
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
-        <AuthFormField label="Email" type="email" placeholder="you@example.com" registration={register("email")} error={errors.email?.message} />
-        <AuthFormField label="Password" type="password" placeholder="••••••••" registration={register("password")} error={errors.password?.message} />
+        <FormField label="Email" type="email" placeholder="you@example.com" registration={register("email")} error={errors.email?.message} />
+        <FormField label="Password" type="password" placeholder="••••••••" registration={register("password")} error={errors.password?.message} />
 
         {serverError && (
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-rust text-sm bg-rust/5 border border-rust/20 rounded-lg px-3 py-2">

@@ -1,8 +1,11 @@
+"use client";
+
 import { Bricolage_Grotesque, Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
+import { usePathname } from "next/navigation";
 import "./globals.css";
 import Providers from "./providers";
-import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
 
 
 const bricolage = Bricolage_Grotesque({
@@ -24,13 +27,18 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isAdminRoute = pathname?.startsWith("/admin");
+
   return (
     <html lang="en">
-      <body className={`${bricolage.variable} ${jakarta.variable} ${plexMono.variable} font-body bg-base text-ink flex flex-col min-h-screen`}>
+      <body
+        className={`${bricolage.variable} ${jakarta.variable} ${plexMono.variable} font-body bg-base text-ink flex flex-col min-h-screen`}
+      >
         <Providers>
-          <Header />
+          {!isAdminRoute && <Header/>}
           <div className="flex-1">{children}</div>
-          <Footer />
+          {!isAdminRoute && <Footer />}
         </Providers>
       </body>
     </html>

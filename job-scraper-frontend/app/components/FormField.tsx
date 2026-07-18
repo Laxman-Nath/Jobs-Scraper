@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { UseFormRegisterReturn } from "react-hook-form";
 
-type AuthFormFieldProps = {
+type FormFieldProps = {
   label: string;
   type: string;
   placeholder: string;
@@ -9,7 +9,7 @@ type AuthFormFieldProps = {
   error?: string;
 };
 
-export function AuthFormField({ label, type, placeholder, registration, error }: AuthFormFieldProps) {
+export function FormField({ label, type, placeholder, registration, error }: FormFieldProps) {
   return (
     <div>
       <label className="text-xs font-mono text-muted mb-1.5 block">{label}</label>

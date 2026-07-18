@@ -6,6 +6,7 @@ export async function getSources(pageNo = 1, pageSize = 20, q?: string): Promise
   const params = new URLSearchParams({ pageNo: String(pageNo), pageSize: String(pageSize) });
   if (q) params.set("q", q);
   const { data } = await apiClient.get<PagedResponse<Source>>(`/admin/sources?${params.toString()}`);
+console.log('Sources fetched:', data);
   return data;
 }
 
