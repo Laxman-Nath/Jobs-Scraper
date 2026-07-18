@@ -8,7 +8,6 @@ import com.laxmannath.job_scraper_backend.services.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -37,6 +36,13 @@ public class JobsController {
     public PagedResponse<Job> getAllOrSearchJobs(@ModelAttribute  Pagination pagination,@RequestParam(required = false) String q){
         return jobService.listJobsPaginated(pagination,q);
     }
+
+    // will be used by admin only
+    @GetMapping("/crawl/{sourceId}")
+    public void crawlSource(@PathVariable Long sourceId){
+        jobService.crawlSource(sourceId);
+    }
+
 
 
 

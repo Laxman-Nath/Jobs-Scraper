@@ -96,5 +96,4 @@ System.out.println("Sources to be crawled :"+sources);
         return jobRepository.count();
     }
 
-
 }
