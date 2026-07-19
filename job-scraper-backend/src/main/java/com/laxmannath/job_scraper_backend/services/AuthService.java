@@ -28,12 +28,19 @@ public class AuthService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Email already registered");
         }
-
         User user = new User();
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
+        user.setPreferredTitles(request.getPreferredTitles());
+        user.setSkills(request.getSkills());
+        user.setPreferredLocations(request.getPreferredLocations());
+        user.setProfileComplete(request.getPreferredTitles() != null && !request.getPreferredTitles().isEmpty());
+        user.setEmailVerified(false);
+
         userRepository.save(user);
+
+        // emailVerificationService.sendVerificationEmail(user); // wire in once RabbitMQ is set up
 
         return buildAuthResponse(user, response);
     }

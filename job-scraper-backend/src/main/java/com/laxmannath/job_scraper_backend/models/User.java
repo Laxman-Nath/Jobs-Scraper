@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 @Data
@@ -25,4 +28,25 @@ public class User extends Auditable {
     private Role role = Role.USER;
 
     private Boolean enabled = true;
+    private Boolean emailVerified = false;
+    private String verificationToken;
+    private LocalDateTime verificationTokenExpiresAt;
+
+    @ElementCollection
+    @CollectionTable(name = "user_preferred_titles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "title")
+    private List<String> preferredTitles;
+
+    @ElementCollection
+    @CollectionTable(name = "user_skills", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "skill")
+    private List<String> skills;
+
+    @ElementCollection
+    @CollectionTable(name = "user_preferred_locations", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "location")
+    private List<String> preferredLocations;
+
+    private Boolean profileComplete = false;
+    private Boolean emailNotificationsEnabled = true;
 }
