@@ -1,11 +1,13 @@
 import { AuthResponse } from "../types/auth";
 import { apiClient } from "./client";
 
-
-export async function register(email: string, password: string): Promise<AuthResponse> {
-
-  const { data } = await apiClient.post<AuthResponse>("/auth/register", { email, password });
-    return data;
+export async function register(
+  email: string,
+  password: string,
+  profile?: { preferredTitles?: string[]; skills?: string[]; preferredLocations?: string[] }
+): Promise<AuthResponse> {
+  const { data } = await apiClient.post<AuthResponse>("/auth/register", { email, password, ...profile });
+  return data;
 }
 
 export async function login(email: string, password: string): Promise<AuthResponse> {

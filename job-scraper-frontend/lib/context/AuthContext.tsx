@@ -45,12 +45,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUserRole(res.role);
   }
 
-  async function register(email: string, password: string) {
-    const res = await authApi.register(email, password);
-    setAccessToken(res.accessToken);
-    setUser({ email: res.email, role: res.role });
-    setUserRole(res.role);
-  }
+async function register(
+  email: string,
+  password: string,
+  profile?: { preferredTitles?: string[]; skills?: string[]; preferredLocations?: string[] }
+) {
+  const res = await authApi.register(email, password, profile);
+  setAccessToken(res.accessToken);
+  setUser({ email: res.email, role: res.role });
+}
 
   async function logout() {
     await authApi.logout().catch(() => {});
