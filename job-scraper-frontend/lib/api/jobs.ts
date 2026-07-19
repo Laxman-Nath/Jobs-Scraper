@@ -18,3 +18,10 @@ export async function crawlSource(sourceId: number): Promise<Job[]> {
   const { data } = await apiClient.get<Job[]>(`/jobs/crawl/${sourceId}`);
   return data;
 }
+
+export async function getJobsBySource(sourceId: number, pageNo = 1, pageSize = 10): Promise<PagedResponse<Job>> {
+  const { data } = await apiClient.get<PagedResponse<Job>>(
+    `/jobs/by-source/${sourceId}?pageNo=${pageNo}&pageSize=${pageSize}`
+  );
+  return data;
+}

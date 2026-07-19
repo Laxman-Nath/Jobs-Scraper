@@ -3,6 +3,8 @@ package com.laxmannath.job_scraper_backend.services;
 
 import com.laxmannath.job_scraper_backend.dtos.JobDto;
 import com.laxmannath.job_scraper_backend.dtos.PagedResponse;
+import com.laxmannath.job_scraper_backend.exceptions.BadRequestException;
+import com.laxmannath.job_scraper_backend.exceptions.ResourceNotFoundException;
 import com.laxmannath.job_scraper_backend.pagination.Pagination;
 import com.laxmannath.job_scraper_backend.pagination.PaginationDefaults;
 import com.laxmannath.job_scraper_backend.models.Job;
@@ -34,18 +36,19 @@ public class JobService {
         JobFetcher fetcher = fetchers.stream()
                 .filter(f -> f.supports(sourceType))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No fetcher found for type: " + sourceType));
+                .orElseThrow(() -> new BadRequestException("No fetcher found for type: " + sourceType));
 
         return fetcher.fetchJobs(url, companyName);
     }
-    public List<JobDto> crawlSource(Long sourceId) {
+    public List<JobDto> crawlSource(Long sourceId) throws  Exception {
+        Source source = sourceService.getSourceById(sourceId);
+
         try {
-            Source source = sourceService.getSourceById(sourceId);
 
             JobFetcher fetcher = fetchers.stream()
                     .filter(f -> f.supports(source.getSourceType()))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("No fetcher for type: " + source.getSourceType()));
+                    .orElseThrow(() -> new BadRequestException("No fetcher for type: " + source.getSourceType()));
 
             List<JobDto> jobs = fetcher.fetchJobs(source.getUrl(), source.getCompanyName());
             jobPersistenceService.saveJobs(jobs);
@@ -58,17 +61,23 @@ public class JobService {
 
         } catch (Exception e) {
             System.err.println("Crawl failed for source " + sourceId + ": " + e);
-            return List.of();
+            source.setStatus("failing");
+            source.setLastError(e.getMessage());
+            source.setLastCrawledAt(java.time.LocalDateTime.now());
+            throw e;
+
         }
     }
 
     public void crawlAllEnabledSources() {
-        List<Source> sources = sourceService.getAllSources().stream()
-                .filter(Source::getEnabled)
-                .toList();
-System.out.println("Sources to be crawled :"+sources);
+        List<Source> sources = sourceService.getEnabledSources();
         for (Source source : sources) {
-            crawlSource(source.getId());
+            try {
+                crawlSource(source.getId());
+            } catch (Exception e) {
+                // for the CRON path specifically, don't let one failing source crash the whole batch
+                System.err.println("Crawl failed for source " + source.getId() + ": " + e.getMessage());
+            }
         }
     }
 
@@ -76,6 +85,10 @@ System.out.println("Sources to be crawled :"+sources);
 
     public List<Job> getAllJobs(){
         return jobRepository.findAll();
+    }
+
+    public Job getJobById(Long jobId){
+        return jobRepository.findById(jobId).orElseThrow(()-> new ResourceNotFoundException("Job not found with id "+jobId));
     }
 
     public PagedResponse<Job> listJobsPaginated(Pagination pagination,String searchQuery) {
@@ -94,6 +107,17 @@ System.out.println("Sources to be crawled :"+sources);
 
     public Long getTotalNoOfJobs(){
         return jobRepository.count();
+    }
+
+    public PagedResponse<Job> getJobsByCompany(Long sourceId,Pagination pagination){
+        Source source = sourceService.getSourceById(sourceId); // throws ResourceNotFoundException if missing
+
+        pagination = paginationDefaults.applyDefaults(pagination);
+        Pageable pageable = PaginationUtil.performPagination(pagination);
+
+        Page<Job> result = jobRepository.findByCompanyIgnoreCaseAndStatus(source.getCompanyName(), "active", pageable);
+        return new PagedResponse<>(result);
+
     }
 
 }

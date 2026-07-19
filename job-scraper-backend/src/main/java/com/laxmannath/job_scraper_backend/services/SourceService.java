@@ -2,6 +2,7 @@ package com.laxmannath.job_scraper_backend.services;
 
 
 import com.laxmannath.job_scraper_backend.dtos.PagedResponse;
+import com.laxmannath.job_scraper_backend.exceptions.ResourceNotFoundException;
 import com.laxmannath.job_scraper_backend.models.Source;
 import com.laxmannath.job_scraper_backend.pagination.Pagination;
 import com.laxmannath.job_scraper_backend.pagination.PaginationDefaults;
@@ -34,7 +35,7 @@ public class SourceService {
 
     public Source getSourceById(Long id) {
         return sourceRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Source not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Source not found: " + id));
     }
 
     public Source updateSource(Long id, Source updatedFields) {
@@ -49,6 +50,9 @@ public class SourceService {
     }
 
     public void deleteSource(Long id) {
+        if (!sourceRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Source not found with id: " + id);
+        }
         sourceRepository.deleteById(id);
     }
 

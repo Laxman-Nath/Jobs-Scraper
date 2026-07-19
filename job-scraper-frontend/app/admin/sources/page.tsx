@@ -12,6 +12,8 @@ import {
 import { crawlSource } from "@/lib/api/jobs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+
 import { Plus, RefreshCw, Pencil, Trash2 } from "lucide-react";
 import { Source } from "@/lib/types/source";
 import Pagination from "../../components/Pagination";
@@ -144,11 +146,14 @@ export default function AdminSourcesPage() {
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <p
-                    className={`font-semibold truncate ${source.enabled ? "text-ink" : "text-muted"}`}
-                  >
-                    {source.companyName}
-                  </p>
+                  <Link
+  href={`/admin/sources/${source.id}`}
+  className={`font-semibold truncate hover:text-signal transition-colors block ${
+    source.enabled ? "text-ink" : "text-muted"
+  }`}
+>
+  {source.companyName}
+</Link>
                   {!source.enabled && (
                     <Badge
                       variant="outline"

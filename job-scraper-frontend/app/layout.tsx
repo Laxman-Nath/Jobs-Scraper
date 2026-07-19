@@ -6,6 +6,7 @@ import "./globals.css";
 import Providers from "./providers";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
+import { getUserRole } from "@/lib/utils/tokenStore";
 
 
 const bricolage = Bricolage_Grotesque({
@@ -28,7 +29,8 @@ const plexMono = IBM_Plex_Mono({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdminRoute = pathname?.startsWith("/admin");
+
+  const isAdminRoute =getUserRole() === "ADMIN" || pathname?.startsWith("/admin");
 
   return (
     <html lang="en">

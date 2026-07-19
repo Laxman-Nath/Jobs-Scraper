@@ -7,9 +7,10 @@ import { Job } from "@/lib/types/job";
 type JobCardProps = {
   job: Job;
   index?: number;
+  href?:string
 };
 
-export function JobCard({ job, index = 0 }: JobCardProps) {
+export function JobCard({ job, index = 0 ,href}: JobCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -17,7 +18,7 @@ export function JobCard({ job, index = 0 }: JobCardProps) {
       transition={{ delay: index * 0.03, duration: 0.3 }}
     >
       <Link
-        href={`/jobs/${job.id}`}
+        href={href??`/jobs/${job.id}`}
         className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 rounded-2xl bg-white border border-line hover:border-signal/40 hover:shadow-md transition-all duration-300"
       >
         <div className="min-w-0">

@@ -39,9 +39,22 @@ public class JobsController {
 
     // will be used by admin only
     @GetMapping("/crawl/{sourceId}")
-    public void crawlSource(@PathVariable Long sourceId){
+    public void crawlSource(@PathVariable Long sourceId) throws Exception {
         jobService.crawlSource(sourceId);
     }
+
+    @GetMapping("/{jobId}")
+    public Job getJobById(@PathVariable Long jobId){
+     return jobService.getJobById(jobId);
+    }
+
+    @GetMapping("/by-source/{sourceId}")
+    public PagedResponse<Job> getJobsBySource(
+            @PathVariable Long sourceId,
+            @ModelAttribute Pagination pagination) {
+        return jobService.getJobsByCompany(sourceId,pagination);
+    }
+
 
 
 

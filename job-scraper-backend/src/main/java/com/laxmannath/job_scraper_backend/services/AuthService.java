@@ -5,6 +5,8 @@ import com.laxmannath.job_scraper_backend.dtos.LoginRequest;
 import com.laxmannath.job_scraper_backend.dtos.RefreshRequest;
 import com.laxmannath.job_scraper_backend.dtos.RegisterRequest;
 import com.laxmannath.job_scraper_backend.enums.Role;
+import com.laxmannath.job_scraper_backend.exceptions.BadRequestException;
+import com.laxmannath.job_scraper_backend.exceptions.UnauthorizedException;
 import com.laxmannath.job_scraper_backend.models.RefreshToken;
 import com.laxmannath.job_scraper_backend.models.User;
 import com.laxmannath.job_scraper_backend.repository.UserRepository;
@@ -24,7 +26,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     public AuthSuccessResponse register( RegisterRequest request,HttpServletResponse response) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already registered");
+            throw new BadRequestException("Email already registered");
         }
 
         User user = new User();
@@ -38,10 +40,10 @@ public class AuthService {
 
     public AuthSuccessResponse login(LoginRequest request,HttpServletResponse response) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+                .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid credentials");
+            throw new UnauthorizedException("Invalid credentials");
         }
 
         return buildAuthResponse(user, response);
@@ -61,7 +63,7 @@ public class AuthService {
 
     public AuthSuccessResponse refresh(String refreshTokenValue,HttpServletResponse response){
         if (refreshTokenValue == null) {
-            throw new IllegalArgumentException("No refresh token provided");
+            throw new BadRequestException("No refresh token provided");
         }
 
         RefreshToken refreshToken = refreshTokenService.validateAndGet(refreshTokenValue);
