@@ -24,6 +24,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final JwtUtil jwtUtil;
+    private final EmailVerificationService emailVerificationService;
     public AuthSuccessResponse register( RegisterRequest request,HttpServletResponse response) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Email already registered");
@@ -40,7 +41,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        // emailVerificationService.sendVerificationEmail(user); // wire in once RabbitMQ is set up
+         emailVerificationService.sendVerificationEmail(user);
 
         return buildAuthResponse(user, response);
     }

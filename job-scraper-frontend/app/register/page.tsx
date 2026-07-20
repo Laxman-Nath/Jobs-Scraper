@@ -22,19 +22,19 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
   });
 
-  async function onSubmit(data: RegisterFormValues) {
-    setServerError("");
-    try {
-      await registerUser(data.email, data.password, {
-        preferredTitles: splitCommaList(data.preferredTitles),
-        skills: splitCommaList(data.skills),
-        preferredLocations: splitCommaList(data.preferredLocations),
-      });
-      router.push("/");
-    } catch {
-      setServerError("Registration failed. Email may already be in use.");
-    }
+async function onSubmit(data: RegisterFormValues) {
+  setServerError("");
+  try {
+    await registerUser(data.email, data.password, {
+      preferredTitles: splitCommaList(data.preferredTitles),
+      skills: splitCommaList(data.skills),
+      preferredLocations: splitCommaList(data.preferredLocations),
+    });
+    router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+  } catch {
+    setServerError("Registration failed. Email may already be in use.");
   }
+}
 
   function splitCommaList(value?: string): string[] {
     if (!value) return [];

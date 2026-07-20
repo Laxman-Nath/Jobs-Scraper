@@ -61,7 +61,10 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong. Please try again.", request, null);
     }
-
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request, null);
+    }
     private ResponseEntity<ErrorResponse> buildResponse(
             HttpStatus status, String message, HttpServletRequest request, List<ErrorResponse.ValidationError> fieldErrors) {
 

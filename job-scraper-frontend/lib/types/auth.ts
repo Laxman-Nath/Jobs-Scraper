@@ -4,8 +4,9 @@ export type AuthResponse = {
   email: string;
   role: string;
 };
-
 export type User = {
   email: string;
   role: string;
+  emailVerified?: boolean;
+  profileComplete?: boolean;
 };

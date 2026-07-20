@@ -31,9 +31,11 @@ export default function LoginPage() {
         router.push("/admin");
       }
       else{
-      router.push("/");
+      router.push("/dashboard");
       }
-    } catch {
+    } catch(e:any) {
+
+      console.error('Error logging in:', e);
       setServerError("Invalid email or password.");
     }
   }

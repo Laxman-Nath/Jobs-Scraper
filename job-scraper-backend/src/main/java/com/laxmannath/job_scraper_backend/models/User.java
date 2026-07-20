@@ -1,6 +1,7 @@
 package com.laxmannath.job_scraper_backend.models;
 
 
+
 import com.laxmannath.job_scraper_backend.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -31,6 +32,9 @@ public class User extends Auditable {
     private Boolean emailVerified = false;
     private String verificationToken;
     private LocalDateTime verificationTokenExpiresAt;
+
+    @Column(nullable = false)
+    private Integer verificationAttempts = 0;
 
     @ElementCollection
     @CollectionTable(name = "user_preferred_titles", joinColumns = @JoinColumn(name = "user_id"))

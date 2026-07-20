@@ -6,6 +6,7 @@ import { User } from "../types/auth";
 import * as authApi from "../api/auth";
 import { refreshAccessToken } from "../api/auth";
 import { setAccessToken, setUserRole } from "../utils/tokenStore";
+import { getProfile } from "../api/profile";
 
 type AuthContextType = {
   user: User | null;
@@ -38,12 +39,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
-  async function login(email: string, password: string) {
-    const res = await authApi.login(email, password);
-    setAccessToken(res.accessToken);
-    setUser({ email: res.email, role: res.role });
-    setUserRole(res.role);
-  }
+ async function login(email: string, password: string) {
+  const res = await authApi.login(email, password);
+  setAccessToken(res.accessToken);
+  const profile = await getProfile(); // GET /me
+  setUser({ email: profile.email, role: res.role, emailVerified: profile.emailVerified, profileComplete: profile.profileComplete });
+}
 
 async function register(
   email: string,

@@ -24,3 +24,10 @@ export async function logout(): Promise<void> {
   await apiClient.post("/auth/logout");
 }
 
+export async function verifyEmail(email: string, code: string): Promise<void> {
+  await apiClient.post("/email/verify", { email, code });
+}
+
+export async function resendVerificationCode(email: string): Promise<void> {
+  await apiClient.post("/email/resend", { email });
+}

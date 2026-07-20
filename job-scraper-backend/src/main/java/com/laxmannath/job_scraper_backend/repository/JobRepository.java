@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface JobRepository extends  JpaRepository<Job,Long> {
@@ -24,4 +25,5 @@ public interface JobRepository extends  JpaRepository<Job,Long> {
     Page<Job> searchJobs(@Param("query") String query, Pageable pageable);
 
     Page<Job> findByCompanyIgnoreCaseAndStatus(String company, String status, Pageable pageable);
+    List<Job> findAllByStatus(String status);
 }
