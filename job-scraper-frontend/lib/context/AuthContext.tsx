@@ -44,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   setAccessToken(res.accessToken);
   const profile = await getProfile(); // GET /me
   setUser({ email: profile.email, role: res.role, emailVerified: profile.emailVerified, profileComplete: profile.profileComplete });
+  setUserRole(res.role);
 }
 
 async function register(

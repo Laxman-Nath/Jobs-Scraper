@@ -147,13 +147,13 @@ export default function AdminSourcesPage() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <Link
-  href={`/admin/sources/${source.id}`}
-  className={`font-semibold truncate hover:text-signal transition-colors block ${
-    source.enabled ? "text-ink" : "text-muted"
-  }`}
->
-  {source.companyName}
-</Link>
+                    href={`/admin/sources/${source.id}`}
+                    className={`font-semibold truncate hover:text-signal transition-colors block ${
+                      source.enabled ? "text-ink" : "text-muted"
+                    }`}
+                  >
+                    {source.companyName}
+                  </Link>
                   {!source.enabled && (
                     <Badge
                       variant="outline"
