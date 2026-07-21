@@ -44,7 +44,14 @@ jobs:
           echo "DB_URL set: ${{ secrets.DB_URL != '' }}"
           echo "DB_USERNAME set: ${{ secrets.DB_USERNAME != '' }}"
           echo "DB_PASSWORD set: ${{ secrets.DB_PASSWORD != '' }}"
-          
+      
+      - name: Debug DB_URL prefix
+        run: |
+           echo "Length: ${#DB_URL}"
+           echo "First 15 chars: ${DB_URL:0:15}"
+        env:
+           DB_URL: ${{ secrets.DB_URL }}
+
       - name: Build
         run: ./mvnw clean verify
         env:
