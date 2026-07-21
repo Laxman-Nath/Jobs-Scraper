@@ -2,6 +2,7 @@ package com.laxmannath.job_scraper_backend.services;
 
 import com.laxmannath.job_scraper_backend.models.User;
 import com.laxmannath.job_scraper_backend.repository.UserRepository;
+import com.laxmannath.job_scraper_backend.utils.VerificationCodeUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,8 @@ public class PasswordResetService {
         // Don't reveal whether the email exists — always respond as if it worked
         if (user == null) return;
 
-        String code = generateCode();
-        user.setResetPasswordToken(hashCode(code));
+        String code = VerificationCodeUtil.generateCode();
+        user.setResetPasswordToken(VerificationCodeUtil.hash(code));
         user.setResetPasswordTokenExpiresAt(LocalDateTime.now().plusMinutes(CODE_EXPIRY_MINUTES));
         user.setResetPasswordAttempts(0);
         userRepository.save(user);
@@ -64,7 +65,7 @@ public class PasswordResetService {
             throw new IllegalStateException("Too many attempts, request a new code");
         }
 
-        if (user.getResetPasswordToken() == null || !hashCode(code).equals(user.getResetPasswordToken())) {
+        if (user.getResetPasswordToken() == null || !VerificationCodeUtil.hash(code).equals(user.getResetPasswordToken())) {
             user.setResetPasswordAttempts(user.getResetPasswordAttempts() + 1);
             userRepository.save(user);
             throw new IllegalArgumentException("Invalid code");
@@ -77,20 +78,7 @@ public class PasswordResetService {
         userRepository.save(user);
     }
 
-    private String generateCode() {
-        int code = 100_000 + secureRandom.nextInt(900_000);
-        return String.valueOf(code);
-    }
 
-    private String hashCode(String code) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(code.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hex = new StringBuilder();
-            for (byte b : hash) hex.append(String.format("%02x", b));
-            return hex.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 algorithm not available", e);
-        }
-    }
+
+
 }
