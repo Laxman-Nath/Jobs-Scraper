@@ -9,9 +9,9 @@ type AuthCardProps = {
   title: string;
   subtitle: string;
   children: React.ReactNode;
-  footerText: string;
-  footerLinkText: string;
-  footerLinkHref: string;
+  footerText?: string;
+  footerLinkText?: string;
+  footerLinkHref?: string;
 };
 
 export function AuthCard({
@@ -43,9 +43,14 @@ export function AuthCard({
 
         <p className="text-muted text-sm mt-6 text-center">
           {footerText}{" "}
-          <Link href={footerLinkHref} className="text-ink font-medium hover:text-signal transition-colors">
-            {footerLinkText}
-          </Link>
+          {footerText && footerLinkText && footerLinkHref && (
+  <p className="text-muted text-sm mt-6 text-center">
+    {footerText}{" "}
+    <Link href={footerLinkHref} className="text-ink font-medium hover:text-signal transition-colors">
+      {footerLinkText}
+    </Link>
+  </p>
+)}
         </p>
       </motion.div>
     </main>

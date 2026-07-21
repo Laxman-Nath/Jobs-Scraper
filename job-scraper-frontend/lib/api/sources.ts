@@ -9,6 +9,13 @@ export async function getSources(pageNo = 1, pageSize = 20, q?: string): Promise
 console.log('Sources fetched:', data);
   return data;
 }
+export async function getSourcesForUsers(pageNo = 1, pageSize = 20, q?: string): Promise<PagedResponse<Source>> {
+  const params = new URLSearchParams({ pageNo: String(pageNo), pageSize: String(pageSize) });
+  if (q) params.set("q", q);
+  const { data } = await apiClient.get<PagedResponse<Source>>(`/sources?${params.toString()}`);
+console.log('Sources fetched:', data);
+  return data;
+}
 
 
 export async function createSource(payload: Partial<Source>): Promise<Source> {

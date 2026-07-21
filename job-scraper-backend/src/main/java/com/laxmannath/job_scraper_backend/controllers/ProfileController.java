@@ -32,4 +32,9 @@ public class ProfileController {
     public List<Job> getRecommendations(Authentication authentication) {
         return profileService.getRecommendations(authentication.getName());
     }
+
+    @PostMapping("/mute-company")
+    public User toggleMuteCompany(Authentication authentication, @RequestParam String companyName) {
+        return profileService.toggleMuteCompany(authentication.getName(), companyName);
+    }
 }

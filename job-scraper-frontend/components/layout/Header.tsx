@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Briefcase, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";

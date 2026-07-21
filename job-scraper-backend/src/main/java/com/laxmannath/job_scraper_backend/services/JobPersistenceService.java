@@ -59,13 +59,13 @@ System.out.println("Is new job +"+isNewJob);
 
     private void notifyMatchingUsers(Job job) {
         List<User> users = userRepository.findAll().stream()
-                .filter(u -> Boolean.TRUE.equals(u.getProfileComplete()))
-                .filter(u -> Boolean.TRUE.equals(u.getEmailNotificationsEnabled()))
                 .filter(u -> Boolean.TRUE.equals(u.getEmailVerified()))
+                .filter(u -> Boolean.TRUE.equals(u.getEmailNotificationsEnabled()))
+                .filter(u -> u.getMutedCompanies() == null || !u.getMutedCompanies().contains(job.getCompany()))
                 .toList();
 
         for (User user : users) {
-            if (recommendationService.jobMatchesUser(job, user)) {
+            if (Boolean.TRUE.equals(user.getProfileComplete()) && recommendationService.jobMatchesUser(job, user)) {
                 emailPublisher.publishEmail(
                         user.getEmail(),
                         "New job match: " + job.getTitle(),

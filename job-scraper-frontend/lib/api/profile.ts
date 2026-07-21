@@ -6,10 +6,16 @@ export type Profile = {
   preferredTitles: string[];
   skills: string[];
   preferredLocations: string[];
+  mutedCompanies: string[];
   emailNotificationsEnabled: boolean;
   emailVerified: boolean;
   profileComplete: boolean;
 };
+
+export async function toggleMuteCompany(companyName: string): Promise<Profile> {
+  const { data } = await apiClient.post<Profile>(`/me/mute-company?companyName=${encodeURIComponent(companyName)}`);
+  return data;
+}
 
 export async function getProfile(): Promise<Profile> {
   const { data } = await apiClient.get<Profile>("/me");

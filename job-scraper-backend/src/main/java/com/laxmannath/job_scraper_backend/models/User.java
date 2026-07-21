@@ -59,4 +59,9 @@ public class User extends Auditable {
 
     @Column(nullable = false)
     private Integer resetPasswordAttempts = 0;
+
+    @ElementCollection
+    @CollectionTable(name = "user_muted_companies", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "company_name")
+    private List<String> mutedCompanies;
 }

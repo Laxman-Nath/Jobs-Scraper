@@ -10,5 +10,6 @@ public class ProfileUpdateRequest {
     private List<String> preferredTitles;
     private List<String> skills;
     private List<String> preferredLocations;
+    private List<String> mutedCompanies;
     private Boolean emailNotificationsEnabled;
 }

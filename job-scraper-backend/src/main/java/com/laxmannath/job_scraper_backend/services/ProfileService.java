@@ -10,6 +10,7 @@ import com.laxmannath.job_scraper_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,7 +32,7 @@ public class ProfileService {
         if (updates.getSkills() != null) user.setSkills(updates.getSkills());
         if (updates.getPreferredLocations() != null) user.setPreferredLocations(updates.getPreferredLocations());
         if (updates.getEmailNotificationsEnabled() != null) user.setEmailNotificationsEnabled(updates.getEmailNotificationsEnabled());
-
+        if (updates.getMutedCompanies() != null) user.setMutedCompanies(updates.getMutedCompanies());
         boolean hasEnoughInfo = user.getPreferredTitles() != null && !user.getPreferredTitles().isEmpty();
         user.setProfileComplete(hasEnoughInfo);
 
@@ -41,5 +42,19 @@ public class ProfileService {
     public List<Job> getRecommendations(String email) {
         User user = getProfile(email);
         return recommendationService.getRecommendationsForUser(user);
+    }
+
+    public User toggleMuteCompany(String email, String companyName) {
+        User user = getProfile(email);
+        List<String> muted = user.getMutedCompanies() != null ? new ArrayList<>(user.getMutedCompanies()) : new ArrayList<>();
+
+        if (muted.contains(companyName)) {
+            muted.remove(companyName);
+        } else {
+            muted.add(companyName);
+        }
+
+        user.setMutedCompanies(muted);
+        return userRepository.save(user);
     }
 }

@@ -31,7 +31,7 @@ export default function AdminSourcesPage() {
 
   const { data: sourcesPage, isLoading } = useQuery({
     queryKey: ["sources", pageNo],
-    queryFn: () => getSources(pageNo, 20),
+    queryFn: () => getSources(pageNo, 10),
   });
 
   const createMutation = useMutation({
