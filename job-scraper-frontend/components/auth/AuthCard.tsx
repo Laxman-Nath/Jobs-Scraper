@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Briefcase } from "lucide-react";
+import { Logo } from "../layout/Logo";
 
 type AuthCardProps = {
   title: string;
@@ -30,10 +31,9 @@ export function AuthCard({
         className="w-full max-w-sm"
       >
         <div className="flex items-center gap-2 mb-8">
-          <div className="w-9 h-9 rounded-lg bg-ink flex items-center justify-center">
-            <Briefcase className="h-4 w-4 text-base" strokeWidth={2} />
-          </div>
-          <span className="font-display font-semibold text-lg text-ink">JobFinder</span>
+         <div className="mb-8">
+  <Logo size="md" />
+</div>
         </div>
 
         <h1 className="font-display font-semibold text-3xl text-ink mb-1">{title}</h1>

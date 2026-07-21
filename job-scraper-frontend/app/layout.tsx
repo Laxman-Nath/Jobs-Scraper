@@ -4,8 +4,8 @@ import { Bricolage_Grotesque, Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font
 import { usePathname } from "next/navigation";
 import "./globals.css";
 import Providers from "./providers";
-import { Header } from "./components/Header";
-import { Footer } from "./components/Footer";
+import { Header } from "../components/layout/Header";
+import { Footer } from "../components/layout/Footer";
 import { getUserRole } from "@/lib/utils/tokenStore";
 
 

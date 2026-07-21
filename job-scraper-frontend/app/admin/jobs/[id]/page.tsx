@@ -1,6 +1,6 @@
 "use client";
 
-import { JobDetailContent } from "@/app/components/JobDetailContent";
+import { JobDetailContent } from "@/components/jobs/JobDetailContent";
 import { useParams } from "next/navigation";
 
 export default function AdminJobDetailPage() {

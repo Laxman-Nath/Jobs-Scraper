@@ -2,8 +2,8 @@ import { getJobs } from "@/lib/api/jobs";
 import Link from "next/link";
 
 import { ArrowRight } from "lucide-react";
-import { AnimatedHero } from "./components/AnimatedHero";
-import { JobList } from "./components/JobList";
+import { AnimatedHero } from "../components/layout/AnimatedHero";
+import { JobList } from "../components/jobs/JobList";
 
 export default async function Home() {
   const jobsPage = await getJobs(1, 6);

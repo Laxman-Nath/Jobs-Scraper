@@ -9,8 +9,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { resetPassword, forgotPassword } from "@/lib/api/auth";
-import { AuthCard } from "../components/auth/AuthCard";
-import { FormField } from "../components/FormField";
+import { AuthCard } from "../../components/auth/AuthCard";
+import { FormField } from "../../components/common/FormField";
 
 const resetPasswordSchema = z
   .object({

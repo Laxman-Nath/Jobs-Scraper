@@ -6,7 +6,7 @@ import { getRecommendations } from "@/lib/api/profile";
 import Link from "next/link";
 import { Mail, User as UserIcon, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
-import { JobList } from "../components/JobList";
+import { JobList } from "../../components/jobs/JobList";
 import { User } from "@/lib/types/auth";
 
 export default function DashboardPage() {

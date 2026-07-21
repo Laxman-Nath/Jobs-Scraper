@@ -16,10 +16,10 @@ import Link from "next/link";
 
 import { Plus, RefreshCw, Pencil, Trash2 } from "lucide-react";
 import { Source } from "@/lib/types/source";
-import Pagination from "../../components/Pagination";
+import Pagination from "../../../components/common/Pagination";
 import { SourceFormValues } from "@/lib/validations/sourceSchema";
-import { SourceFormDialog } from "@/app/components/SourceFormDialog";
-import { DeleteConfirmDialog } from "@/app/components/DeleteConfirmationDialog";
+import { SourceFormDialog } from "@/components/source/SourceFormDialog";
+import { DeleteConfirmDialog } from "@/components/common/DeleteConfirmationDialog";
 
 export default function AdminSourcesPage() {
   const queryClient = useQueryClient();

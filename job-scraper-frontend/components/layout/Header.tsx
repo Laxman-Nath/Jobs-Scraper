@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Briefcase, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 import { usePathname } from "next/navigation";
+import { Logo } from "./Logo";
 
 
 
@@ -21,12 +22,10 @@ export function Header() {
   return (
     <header className="border-b border-line bg-base/90 backdrop-blur sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 md:px-12 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-ink flex items-center justify-center">
-            <Briefcase className="h-4 w-4 text-base" strokeWidth={2} />
-          </div>
-          <span className="font-display font-semibold text-lg text-ink">JobFinder</span>
-        </Link>
+ <Link href="/" className="flex items-center gap-2 shrink-0">
+  <Logo size="sm" />
+</Link>
+        
 
         <nav className="hidden md:flex items-center gap-1">
           {links.map((link) => {

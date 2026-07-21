@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 import { RegisterFormValues, registerSchema } from "@/lib/validations/authSchema";
-import { AuthCard } from "../components/auth/AuthCard";
-import { FormField } from "../components/FormField";
+import { AuthCard } from "../../components/auth/AuthCard";
+import { FormField } from "../../components/common/FormField";
 
 
 export default function RegisterPage() {

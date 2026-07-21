@@ -6,8 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { getJobsBySource } from "@/lib/api/jobs";
 import { ArrowLeft } from "lucide-react";
-import Pagination from "../../../components/Pagination";
-import { JobList } from "@/app/components/JobList";
+import Pagination from "../../../../components/common/Pagination";
+import { JobList } from "@/components/jobs/JobList";
 
 export default function SourceDetailPage() {
   const params = useParams();

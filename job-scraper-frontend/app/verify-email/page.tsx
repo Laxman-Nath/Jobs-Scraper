@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { verifyEmail, resendVerificationCode } from "@/lib/api/auth";
-import { AuthCard } from "../components/auth/AuthCard";
+import { AuthCard } from "../../components/auth/AuthCard";
 
 function VerifyEmailForm() {
   const searchParams = useSearchParams();

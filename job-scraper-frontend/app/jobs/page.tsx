@@ -6,9 +6,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { getJobs } from "@/lib/api/jobs";
 
-import Pagination from "../components/Pagination";
-import { JobSearchInput } from "../components/JobSearchInput";
-import { JobList } from "../components/JobList";
+import Pagination from "../../components/common/Pagination";
+import { JobSearchInput } from "../../components/auth/JobSearchInput";
+import { JobList } from "../../components/jobs/JobList";
 
 export default function JobsPage() {
   return (
