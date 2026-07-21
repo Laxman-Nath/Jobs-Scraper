@@ -13,6 +13,6 @@ export function setUserRole(role: string | null) {
 }
 
 export function getUserRole(): string | null {
-  print('User role:', userRole);
+  console.log('User role:', userRole);
   return userRole;
 }

@@ -53,4 +53,10 @@ public class User extends Auditable {
 
     private Boolean profileComplete = false;
     private Boolean emailNotificationsEnabled = true;
+
+    private String resetPasswordToken;
+    private LocalDateTime resetPasswordTokenExpiresAt;
+
+    @Column(nullable = false)
+    private Integer resetPasswordAttempts = 0;
 }

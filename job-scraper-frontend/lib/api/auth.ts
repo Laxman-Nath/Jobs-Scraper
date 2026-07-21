@@ -31,3 +31,11 @@ export async function verifyEmail(email: string, code: string): Promise<void> {
 export async function resendVerificationCode(email: string): Promise<void> {
   await apiClient.post("/email/resend", { email });
 }
+
+export async function forgotPassword(email: string): Promise<void> {
+  await apiClient.post("/password/forgot", { email });
+}
+
+export async function resetPassword(email: string, code: string, newPassword: string): Promise<void> {
+  await apiClient.post("/password/reset", { email, code, newPassword });
+}

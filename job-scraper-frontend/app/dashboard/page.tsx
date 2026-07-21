@@ -7,9 +7,11 @@ import Link from "next/link";
 import { Mail, User as UserIcon, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 import { JobList } from "../components/JobList";
+import { User } from "@/lib/types/auth";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  console.log('User :', user);
 
   const { data: recommendations, isLoading } = useQuery({
     queryKey: ["recommendations"],
@@ -27,7 +29,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Email verification banner */}
-   {user && !(user as any).emailVerified && (
+   {user && !(user as User).emailVerified && (
   <motion.div
     initial={{ opacity: 0, y: -8 }}
     animate={{ opacity: 1, y: 0 }}
@@ -49,7 +51,7 @@ export default function DashboardPage() {
   </motion.div>
 )}
       {/* Profile incomplete prompt */}
-      <motion.div
+   { user && !(user as User).profileComplete &&  <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
@@ -68,7 +70,7 @@ export default function DashboardPage() {
         >
           Edit profile
         </Link>
-      </motion.div>
+      </motion.div>}
 
       {/* Recommendations */}
       <div className="flex items-center gap-2 mb-6">
@@ -86,6 +88,7 @@ export default function DashboardPage() {
         <JobList
           jobs={recommendations ?? []}
           emptyMessage="Complete your profile to see personalized recommendations."
+          linkPrefix="/jobs"
         />
       )}
     </main>

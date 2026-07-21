@@ -12,6 +12,7 @@ import { LoginFormValues, loginSchema } from "@/lib/validations/authSchema";
 import { AuthCard } from "../components/auth/AuthCard";
 import { FormField } from "../components/FormField";
 import { getUserRole } from "@/lib/utils/tokenStore";
+import Link from 'next/link'
 
 
 export default function LoginPage() {
@@ -63,6 +64,9 @@ export default function LoginPage() {
           {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />}
         </Button>
       </form>
+      <Link href="/forgot-password" className="text-muted text-xs hover:text-ink self-end mt-10 flex justify-center">
+  Forgot password?
+</Link>
     </AuthCard>
   );
 }
