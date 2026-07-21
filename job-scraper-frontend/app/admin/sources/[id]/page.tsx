@@ -29,27 +29,38 @@ export default function SourceDetailPage() {
         All sources
       </Link>
 
-      <h1 className="font-display font-semibold text-3xl text-ink mb-1">Jobs from this source</h1>
+      <h1 className="font-display font-semibold text-3xl text-ink mb-1">
+        Jobs from this source
+      </h1>
       {jobsPage && (
-        <p className="text-muted text-sm mb-8">{jobsPage.totalElements} jobs found</p>
+        <p className="text-muted text-sm mb-8">
+          {jobsPage.totalElements} jobs found
+        </p>
       )}
 
       {isLoading ? (
         <div className="grid gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-20 rounded-2xl bg-white border border-line animate-pulse" />
+            <div
+              key={i}
+              className="h-20 rounded-2xl bg-white border border-line animate-pulse"
+            />
           ))}
         </div>
       ) : (
         <>
-         <JobList
-  jobs={jobsPage?.content ?? []}
-  emptyMessage="No jobs found for this source yet."
-  linkPrefix="/admin/jobs"
-/>
+          <JobList
+            jobs={jobsPage?.content ?? []}
+            emptyMessage="No jobs found for this source yet."
+            linkPrefix="/admin/jobs"
+          />
           {jobsPage && (
             <div className="mt-8">
-              <Pagination page={jobsPage.page} totalPages={jobsPage.totalPages} onPageChange={setPageNo} />
+              <Pagination
+                page={jobsPage.page}
+                totalPages={jobsPage.totalPages}
+                onPageChange={setPageNo}
+              />
             </div>
           )}
         </>
