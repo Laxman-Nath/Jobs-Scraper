@@ -17,3 +17,15 @@ pagination.default-page-size=10
 pagination.max-page-size=100
 pagination.default-sort-parameter=createdAt
 pagination.default-sorting-order=descending
+
+
+spring.rabbitmq.addresses=your_rabbitmq_url
+
+spring.rabbitmq.ssl.enabled=true
+
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=your_mail
+spring.mail.password=your_app_password
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
