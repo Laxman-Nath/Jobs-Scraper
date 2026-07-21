@@ -39,6 +39,12 @@ jobs:
       - name: Make Maven Wrapper Executable
         run: chmod +x mvnw
 
+      - name: Debug env presence
+        run: |
+          echo "DB_URL set: ${{ secrets.DB_URL != '' }}"
+          echo "DB_USERNAME set: ${{ secrets.DB_USERNAME != '' }}"
+          echo "DB_PASSWORD set: ${{ secrets.DB_PASSWORD != '' }}"
+          
       - name: Build
         run: ./mvnw clean verify
         env:
