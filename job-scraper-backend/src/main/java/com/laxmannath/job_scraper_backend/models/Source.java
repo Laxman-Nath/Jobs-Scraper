@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-
 public class Source extends  Auditable implements Serializable {
 
     @Id
