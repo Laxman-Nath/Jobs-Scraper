@@ -9,6 +9,9 @@ import com.laxmannath.job_scraper_backend.pagination.PaginationDefaults;
 import com.laxmannath.job_scraper_backend.pagination.PaginationUtil;
 import com.laxmannath.job_scraper_backend.repository.SourceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,10 @@ public class SourceService {
     private final SourceRepository sourceRepository;
     private final PaginationDefaults paginationDefaults;
 
+    @Caching(evict = {
+            @CacheEvict(value = "sourcesList",allEntries = true)
+    })
+
     public Source createSource(Source source) {
         source.setEnabled(true);
         source.setStatus("active");
@@ -33,11 +40,16 @@ public class SourceService {
         return sourceRepository.findAll();
     }
 
+    @Cacheable(value = "sources", key = "#id")
     public Source getSourceById(Long id) {
         return sourceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Source not found: " + id));
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "sources", key = "#id"),
+            @CacheEvict(value = "sourcesList", allEntries = true)
+    })
     public Source updateSource(Long id, Source updatedFields) {
         Source existing = getSourceById(id);
 
@@ -48,6 +60,11 @@ public class SourceService {
 
         return sourceRepository.save(existing);
     }
+
+    @Caching(evict = {
+            @CacheEvict(value = "sources", key = "#id"),
+            @CacheEvict(value = "sourcesList", allEntries = true)
+    })
 
     public void deleteSource(Long id) {
         if (!sourceRepository.existsById(id)) {
@@ -66,6 +83,7 @@ public class SourceService {
         return sourceRepository.count();
     }
 
+    @Cacheable(value = "sourcesList", key = "#pagination.pageNo + '-' + #pagination.pageSize + '-' + (#pagination.sortParameter ?: 'createdAt') + '-' + (# pagination.sortingOrder ?: 'descending')")
     public PagedResponse<Source> listSourcesPaginated(Pagination pagination,String searchQuery) {
         pagination = paginationDefaults.applyDefaults(pagination);
         Pageable pageable = PaginationUtil.performPagination(pagination);

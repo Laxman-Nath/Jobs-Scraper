@@ -2,11 +2,13 @@ package com.laxmannath.job_scraper_backend.dtos;
 
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class PagedResponse<T> {
     private List<T> content;
     private int page;
