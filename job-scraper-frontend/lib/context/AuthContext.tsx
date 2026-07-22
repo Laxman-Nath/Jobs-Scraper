@@ -28,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refreshAccessToken()
       .then((res) => {
         setAccessToken(res.accessToken);
+        
         setUser({ email: res.email, role: res.role });
         setUserRole(res.role);
       })
@@ -43,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const res = await authApi.login(email, password);
   setAccessToken(res.accessToken);
   const profile = await getProfile(); // GET /me
+  console.log('Profile after login:', profile);
   setUser({ email: profile.email, role: res.role, emailVerified: profile.emailVerified, profileComplete: profile.profileComplete });
   setUserRole(res.role);
 }

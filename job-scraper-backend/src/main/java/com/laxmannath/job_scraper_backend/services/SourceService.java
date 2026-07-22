@@ -9,6 +9,7 @@ import com.laxmannath.job_scraper_backend.pagination.PaginationDefaults;
 import com.laxmannath.job_scraper_backend.pagination.PaginationUtil;
 import com.laxmannath.job_scraper_backend.repository.SourceRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SourceService {
 
     private final SourceRepository sourceRepository;
@@ -42,6 +44,8 @@ public class SourceService {
 
     @Cacheable(value = "sources", key = "#id")
     public Source getSourceById(Long id) {
+        log.info("CACHE MISS — querying DB for job with job id [id={}]", id);
+
         return sourceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Source not found: " + id));
     }
@@ -85,6 +89,8 @@ public class SourceService {
 
     @Cacheable(value = "sourcesList", key = "#pagination.pageNo + '-' + #pagination.pageSize + '-' + (#pagination.sortParameter ?: 'createdAt') + '-' + (# pagination.sortingOrder ?: 'descending')")
     public PagedResponse<Source> listSourcesPaginated(Pagination pagination,String searchQuery) {
+        log.info("CACHE MISS — querying DB for sourcesList [q={}, page={}, size={}]", searchQuery, pagination.getPageNo(), pagination.getPageSize());
+
         pagination = paginationDefaults.applyDefaults(pagination);
         Pageable pageable = PaginationUtil.performPagination(pagination);
 

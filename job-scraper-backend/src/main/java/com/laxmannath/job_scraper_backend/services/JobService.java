@@ -14,15 +14,17 @@ import com.laxmannath.job_scraper_backend.pagination.PaginationUtil;
 import com.laxmannath.job_scraper_backend.repository.JobRepository;
 import com.laxmannath.job_scraper_backend.services.fetcher.JobFetcher;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JobService {
 
     private final List<JobFetcher> fetchers; // Spring injects ALL JobFetcher beans automatically
@@ -91,7 +93,12 @@ public class JobService {
         return jobRepository.findById(jobId).orElseThrow(()-> new ResourceNotFoundException("Job not found with id "+jobId));
     }
 
+    @Cacheable(
+            value = "jobsList",
+            key = "#pagination.pageNo + '-' + #pagination.pageSize + '-' + (#pagination.sortParameter ?: 'createdAt') + '-' + (#q ?: 'none')"
+    )
     public PagedResponse<Job> listJobsPaginated(Pagination pagination,String searchQuery) {
+        log.info("CACHE MISS — querying DB for jobsList [q={}, page={}, size={}]", searchQuery, pagination.getPageNo(), pagination.getPageSize());
         pagination = paginationDefaults.applyDefaults(pagination);
         Pageable pageable = PaginationUtil.performPagination(pagination);
 

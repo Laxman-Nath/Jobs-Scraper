@@ -9,6 +9,7 @@ import { RecommendedJobs } from "@/components/jobs/RecommendedJobs";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  console.log('User in dashboard page:', user);
 
   return (
     <main className="max-w-5xl mx-auto px-6 md:px-12 py-12">

@@ -9,6 +9,7 @@ import com.laxmannath.job_scraper_backend.repository.JobRepository;
 import com.laxmannath.job_scraper_backend.repository.UserRepository;
 import com.laxmannath.job_scraper_backend.utils.IdGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class JobPersistenceService {
     private final EmailPublisher emailPublisher;
     @org.springframework.beans.factory.annotation.Value("${app.frontend-url}")
     private String frontendUrl;
-
+    @CacheEvict(value = "jobsList", allEntries = true)
     public void saveJobs(List<JobDto> jobDtos) {
         for (JobDto dto : jobDtos) {
             String externalId = IdGenerator.generateExternalId(dto.getCompany(), dto.getTitle());
