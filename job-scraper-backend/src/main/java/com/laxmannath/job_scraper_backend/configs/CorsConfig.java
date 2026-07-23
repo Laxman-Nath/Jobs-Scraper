@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("http://localhost:3000","https://jobs-scraper-nu.vercel.app")
                         .allowedMethods("GET", "POST", "PATCH", "DELETE")
                         .allowedHeaders("*")
                         .allowCredentials(true);
