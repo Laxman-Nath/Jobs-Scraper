@@ -12,7 +12,15 @@ type AuthContextType = {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    profile?: {
+      preferredTitles?: string[];
+      skills?: string[];
+      preferredLocations?: string[];
+    }
+  ) => Promise<void>;
   logout: () => Promise<void>;
 };
 
