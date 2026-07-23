@@ -49,8 +49,10 @@ function ResetPasswordForm() {
     try {
       await resetPassword(email, data.code, data.newPassword);
       router.push("/login?reset=true");
-    } catch (e: any) {
-      setServerError(e?.response?.data?.message ?? "Invalid or expired code.");
+    } catch (e: unknown) {
+      console.error("Reset password error:", e);
+      const error = e as { response?: { data?: { message?: string } } };
+      setServerError(error.response?.data?.message ?? "Invalid or expired code.");
     }
   }
 
@@ -60,9 +62,12 @@ function ResetPasswordForm() {
       await forgotPassword(email);
       setResendStatus("sent");
       setResendCooldown(60);
-    } catch {
+    } catch (e: unknown) {
+      console.error("Resend code error:", e);
+      const error = e as { response?: { data?: { message?: string } } };
+      setServerError(error.response?.data?.message ?? "Couldn't resend code. Try again shortly.");
       setResendStatus("idle");
-      setServerError("Couldn't resend code. Try again shortly.");
+  
     }
   }
 

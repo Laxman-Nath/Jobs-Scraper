@@ -32,9 +32,11 @@ function VerifyEmailForm() {
     try {
       await verifyEmail(email, code);
       router.push("/dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      console.error("Verify email error:", err);
+      const error = err as { response?: { data?: { message?: string } } };
       setStatus("error");
-      setError(err?.response?.data?.message ?? "Invalid or expired code.");
+      setError(error.response?.data?.message ?? "Invalid or expired code.");
     }
   }
 
@@ -44,20 +46,22 @@ function VerifyEmailForm() {
       await resendVerificationCode(email);
       setResendStatus("sent");
       setResendCooldown(60);
-    } catch {
+    } catch (e: unknown) {
+      console.error("Resend verification code error:", e);
+      const error = e as { response?: { data?: { message?: string } } };
       setResendStatus("idle");
-      setError("Couldn't resend code. Try again shortly.");
+      setError(error.response?.data?.message ?? "Couldn't resend code. Try again shortly.");
     }
   }
 
   if (!email) {
     return (
       <AuthCard title="Verify your email" subtitle="Missing email address.">
-        <p className="text-muted text-sm">
+        <div className="text-muted text-sm">
           We couldn't find an email to verify. Please{" "}
           <a href="/register" className="underline">sign up again</a> or{" "}
           <a href="/login" className="underline">log in</a>.
-        </p>
+        </div>
       </AuthCard>
     );
   }

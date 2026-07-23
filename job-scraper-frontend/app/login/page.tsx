@@ -34,7 +34,9 @@ export default function LoginPage() {
       else{
       router.push("/dashboard");
       }
-    } catch(e:any) {
+    } catch(e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      setServerError(error.response?.data?.message ?? "Invalid email or password.");
 
       console.error('Error logging in:', e);
       setServerError("Invalid email or password.");

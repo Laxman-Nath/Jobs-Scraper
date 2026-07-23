@@ -66,8 +66,9 @@ export default function EditProfilePage() {
       setSuccessMessage("Profile updated.");
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
-    onError: (e: any) => {
-      setServerError(e?.response?.data?.message ?? "Couldn't update profile. Please try again.");
+    onError: (e: unknown) => {
+      console.error("Update profile error:", e);
+      setServerError((e as { response?: { data?: { message?: string } } })?.response?.data?.message ?? "Couldn't update profile. Please try again.");
     },
   });
 

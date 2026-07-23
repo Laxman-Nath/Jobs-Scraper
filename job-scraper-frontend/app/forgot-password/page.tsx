@@ -31,7 +31,8 @@ export default function ForgotPasswordPage() {
     try {
       await forgotPassword(data.email);
       router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
-    } catch (e: any) {
+    } catch (e:unknown) {
+      console.error("Forgot password error:", e);
       // Still redirect even on error — never reveal whether the email exists
       router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
     }
