@@ -21,11 +21,11 @@ active — so users aren't wasting time on ghost postings.
 - **Message queue**: RabbitMQ (CloudAMQP) — async email delivery
 - **Auth**: JWT access tokens (in-memory) + httpOnly refresh token cookies
 - **Job extraction**: hybrid pipeline —
-  - Official ATS APIs (Greenhouse, Lever) where available
-  - LLM-based extraction (Google Gemini) as a fallback for unstructured career pages
+  - LLM-based extraction (Google Gemini), currently active
+  - Official ATS APIs (Greenhouse, Lever) planned as a future addition
 - **Email**: SMTP via Spring Mail, queued through RabbitMQ
 
-### Architecture Diagram
+### Overview
 
 ```mermaid
 flowchart TB
@@ -37,8 +37,8 @@ flowchart TB
         Auth["Auth Layer\nJWT + httpOnly refresh cookie\nSpring Security"]
         API["REST Controllers\nJobs, Sources, Profile, Companies, Admin"]
         Cache["Cache Layer\n@Cacheable / @CacheEvict"]
-        Fetchers["JobFetcher implementations\nGreenhouse | Lever | LLM Extract"]
         Sched["Cron Scheduler\n@Scheduled crawl trigger"]
+        Fetchers["JobFetcher implementations\nLLM Extract (active)\nGreenhouse | Lever (planned)"]
         Match["Recommendation Engine\nkeyword matching"]
     end
 
@@ -47,33 +47,78 @@ flowchart TB
         Redis[("Redis Cache\n(Upstash)")]
         RMQ["RabbitMQ\n(CloudAMQP)"]
         Gemini["Gemini API\n(LLM extraction)"]
-        SMTP["SMTP\n(email delivery)"]
-        Careers["Company Career Pages\nATS Platforms"]
+        Careers["Company Career Pages\n(fetched as raw HTML)"]
     end
+
+    Inbox["User's Email Inbox"]
 
     Browser -->|HTTPS + JWT| Auth
     Auth --> API
     API --> Cache
-    Cache -->|hit| Redis
-    Cache -->|miss| Neon
+    Cache -->|cache hit| Redis
+    Cache -->|cache miss| Neon
     API --> Neon
 
-    Sched --> Fetchers
-    Fetchers --> Careers
-    Fetchers -->|unstructured pages| Gemini
-    Fetchers --> Neon
-    Fetchers --> Cache
+    Sched -.-> Fetchers
+    Fetchers -.->|fetch HTML| Careers
+    Fetchers -.->|extract| Gemini
+    Fetchers -.-> Neon
+    Fetchers -.->|invalidate| Cache
+    Neon -.->|new job found| Match
+    Match -.->|match found| RMQ
+    RMQ -.-> Inbox
 
-    Neon -->|new job found| Match
-    Match -->|match found| RMQ
-    RMQ --> SMTP
-    SMTP -->|notification| Browser
+    classDef backend fill:#1c2b3a,color:#fff,stroke:#3a5a78,stroke-width:1px
+    classDef store fill:#2d3748,color:#fff,stroke:#4a5568,stroke-width:1px
+    classDef external fill:#1a5276,color:#fff,stroke:#2874a6,stroke-width:1px
+    classDef client fill:#145a32,color:#fff,stroke:#1e8449,stroke-width:1px
 
-    style Neon fill:#2d3748,color:#fff
-    style Redis fill:#7d3c98,color:#fff
-    style RMQ fill:#b8860b,color:#fff
-    style Gemini fill:#1a5276,color:#fff
-    style Browser fill:#145a32,color:#fff
+    class Auth,API,Cache,Sched,Fetchers,Match backend
+    class Neon,Redis store
+    class RMQ,Gemini,Careers external
+    class Browser,Inbox client
+```
+
+### Request Flow
+
+```mermaid
+flowchart LR
+    Browser["Browser\nNext.js (Vercel)"] -->|HTTPS + JWT| Auth["Auth Layer\nSpring Security"]
+    Auth --> API["REST Controllers\nJobs, sources, admin"]
+    API --> Cache["Cache Layer\nRead-through cache"]
+    Cache -->|cache hit| Redis[("Redis\nUpstash")]
+    Cache -->|cache miss| Neon[("PostgreSQL\nNeon")]
+
+    classDef backend fill:#1c2b3a,color:#fff,stroke:#3a5a78,stroke-width:1px
+    classDef store fill:#2d3748,color:#fff,stroke:#4a5568,stroke-width:1px
+    classDef client fill:#145a32,color:#fff,stroke:#1e8449,stroke-width:1px
+
+    class Auth,API,Cache backend
+    class Neon,Redis store
+    class Browser client
+```
+
+### Background Crawl & Notification Flow
+
+```mermaid
+flowchart LR
+    Sched["Cron Scheduler"] --> Fetchers["Job Fetcher\nLLM extraction (active)"]
+    Fetchers --> Careers["Career Pages\nFetch raw HTML"]
+    Fetchers --> Gemini["Gemini API\nLLM extraction"]
+    Fetchers --> Neon[("PostgreSQL\nNeon")]
+    Neon --> Match["Recommender\nKeyword matching"]
+    Match --> RMQ["RabbitMQ\nAsync queue"]
+    RMQ --> Inbox["User's Email Inbox"]
+
+    classDef backend fill:#1c2b3a,color:#fff,stroke:#3a5a78,stroke-width:1px
+    classDef store fill:#2d3748,color:#fff,stroke:#4a5568,stroke-width:1px
+    classDef external fill:#1a5276,color:#fff,stroke:#2874a6,stroke-width:1px
+    classDef client fill:#145a32,color:#fff,stroke:#1e8449,stroke-width:1px
+
+    class Fetchers,Sched,Match backend
+    class Neon store
+    class RMQ,Gemini,Careers external
+    class Inbox client
 ```
 
 ## Key features
