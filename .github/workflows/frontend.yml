@@ -25,6 +25,9 @@ jobs:
       run:
         working-directory: job-scraper-frontend
 
+    env:
+      NEXT_PUBLIC_API_URL: https://jobs-scraper-c8h5.onrender.com
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
