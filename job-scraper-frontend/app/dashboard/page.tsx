@@ -6,10 +6,25 @@ import { Mail, User as UserIcon, Building2 } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 import { User } from "@/lib/types/auth";
 import { RecommendedJobs } from "@/components/jobs/RecommendedJobs";
+import { useEffect } from "react";
+import { getProfile, Profile } from "@/lib/api/profile";
+import { profile } from "console";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  let profile: Profile | undefined | null;
   console.log('User in dashboard page:', user);
+  useEffect(() => {
+    if (user) {
+      getProfile()
+        .then((profileData) => {
+          profile = profileData;
+        })
+        .catch((error) => {
+          console.error("Error fetching profile:", error);
+        });
+    }
+  }, [user]);
 
   return (
     <main className="max-w-5xl mx-auto px-6 md:px-12 py-12">
@@ -29,7 +44,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Email verification banner */}
-      {user && !(user as User).emailVerified && (
+      {user && !(user as User).emailVerified || !profile?.emailVerified && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -43,7 +58,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <Link
-            href={`/verify-email?email=${encodeURIComponent(user.email)}`}
+            href={`/verify-email?email=${encodeURIComponent(user?.email || '')}`}
             className="font-mono text-xs uppercase tracking-wide border border-signal px-3 py-1.5 rounded-full hover:bg-signal hover:text-base transition-colors shrink-0"
           >
             Verify now
@@ -52,7 +67,7 @@ export default function DashboardPage() {
       )}
 
       {/* Profile incomplete prompt */}
-      {user && !(user as User).profileComplete && (
+      {user && !(user as User).profileComplete || !profile?.profileComplete && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}

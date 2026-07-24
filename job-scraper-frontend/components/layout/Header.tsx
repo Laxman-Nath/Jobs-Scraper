@@ -2,14 +2,10 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { ArrowRight, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
-
-
-
-
 
 export function Header() {
   const { user, logout, loading } = useAuth();
@@ -22,10 +18,9 @@ export function Header() {
   return (
     <header className="border-b border-line bg-base/90 backdrop-blur sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 md:px-12 h-16 flex items-center justify-between">
- <Link href="/" className="flex items-center gap-2 shrink-0">
-  <Logo size="sm" />
-</Link>
-        
+        <Link href="/" className="flex items-center shrink-0">
+          <Logo size="sm" />
+        </Link>
 
         <nav className="hidden md:flex items-center gap-1">
           {links.map((link) => {
@@ -46,7 +41,7 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {loading ? (
             <div className="h-9 w-24" />
           ) : user ? (
@@ -62,18 +57,20 @@ export function Header() {
             </div>
           ) : (
             <>
+              <Link
+                href="/login"
+                className="text-sm font-medium text-muted hover:text-ink transition-colors px-3 py-2"
+              >
+                Log in
+              </Link>
               <Button
                 asChild
-                variant="ghost"
-                className="rounded-full text-sm font-medium text-ink hover:bg-ink/5"
+                className="group rounded-full text-sm font-medium bg-ink text-base hover:bg-ink/90 pl-5 pr-4 shadow-sm hover:shadow-md transition-shadow"
               >
-                <Link href="/login">Log in</Link>
-              </Button>
-              <Button
-                asChild
-                className="rounded-full text-sm font-medium bg-ink text-base hover:bg-ink/90 px-5"
-              >
-                <Link href="/register">Sign up</Link>
+                <Link href="/register" className="flex items-center gap-1.5">
+                  Sign up
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </Link>
               </Button>
             </>
           )}
