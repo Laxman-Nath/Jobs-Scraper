@@ -14,11 +14,13 @@ import com.laxmannath.job_scraper_backend.security.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -41,6 +43,7 @@ public class AuthService {
 
         userRepository.save(user);
 
+        log.info("About to publish verification email for {}", user.getEmail());
          emailVerificationService.sendVerificationEmail(user);
 
         return buildAuthResponse(user, response);

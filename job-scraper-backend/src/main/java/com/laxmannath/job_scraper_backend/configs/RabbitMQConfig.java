@@ -2,10 +2,12 @@ package com.laxmannath.job_scraper_backend.configs;
 
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.amqp.support.converter.MessageConverter;
 @Configuration
+@EnableRabbit
 public class RabbitMQConfig {
 
     public static final String EMAIL_QUEUE = "email.queue";
