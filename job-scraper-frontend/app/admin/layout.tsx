@@ -11,31 +11,8 @@ const navItems = [
   { href: "/admin/sources", label: "Sources", icon: Database },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading, logout } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    if (!loading && (!user || user.role !== "ADMIN")) {
-      router.push("/login");
-    }
-  }, [user, loading, router]);
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
-  if (loading || !user || user.role !== "ADMIN") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="font-mono text-sm text-muted">Checking access...</p>
-      </div>
-    );
-  }
-
-  const NavLinks = () => (
+function NavLinks({ pathname }: { pathname: string }) {
+  return (
     <>
       {navItems.map((item) => {
         const isActive = pathname === item.href;
@@ -57,6 +34,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       })}
     </>
   );
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const { user, loading, logout } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+
+  useEffect(() => {
+    if (!loading && (!user || user.role !== "ADMIN")) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
+
+  // Close mobile menu when route changes - adjusting state during render, not in an effect
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setMobileOpen(false);
+  }
+
+  if (loading || !user || user.role !== "ADMIN") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="font-mono text-sm text-muted">Checking access...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -81,7 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile dropdown menu */}
       {mobileOpen && (
         <div className="border-b border-line bg-white/50 px-3 py-3 space-y-1 md:hidden">
-          <NavLinks />
+          <NavLinks pathname={pathname} />
           <div className="pt-2 mt-2 border-t border-line">
             <p className="px-3 py-1 text-sm text-ink font-medium truncate">{user.email}</p>
             <p className="px-3 font-mono text-xs text-muted">Administrator</p>
@@ -111,7 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1">
-          <NavLinks />
+          <NavLinks pathname={pathname} />
         </nav>
 
         <div className="px-3 py-4 border-t border-line">
