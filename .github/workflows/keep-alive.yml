@@ -1,0 +1,14 @@
+# .github/workflows/keep-alive.yml
+name: Keep Render Backend Alive
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: curl -sf https://jobs-scraper-c8h5.onrender.com/health || echo "Ping failed, but continuing"
