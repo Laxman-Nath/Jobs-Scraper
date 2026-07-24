@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { LayoutDashboard, Database, LogOut, Briefcase, Menu, X } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 
+
 const navItems = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/sources", label: "Sources", icon: Database },
