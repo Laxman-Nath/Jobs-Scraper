@@ -29,23 +29,26 @@ export function AuthCard({
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="w-full max-w-sm"
       >
-       
-
-        <h1 className="font-display font-semibold text-3xl text-ink mb-1">{title}</h1>
+        <h1 className="font-display font-semibold text-3xl text-ink mb-1">
+          {title}
+        </h1>
         <p className="text-muted text-sm mb-8">{subtitle}</p>
 
         {children}
 
         <p className="text-muted text-sm mt-6 text-center">
-          {footerText}{" "}
+          {/* {footerText}{" "} */}
           {footerText && footerLinkText && footerLinkHref && (
-  <p className="text-muted text-sm mt-6 text-center">
-    {footerText}{" "}
-    <Link href={footerLinkHref} className="text-ink font-medium hover:text-signal transition-colors">
-      {footerLinkText}
-    </Link>
-  </p>
-)}
+            <p className="text-muted text-sm mt-6 text-center">
+              {footerText}{" "}
+              <Link
+                href={footerLinkHref}
+                className="text-ink font-medium hover:text-signal transition-colors"
+              >
+                {footerLinkText}
+              </Link>
+            </p>
+          )}
         </p>
       </motion.div>
     </main>

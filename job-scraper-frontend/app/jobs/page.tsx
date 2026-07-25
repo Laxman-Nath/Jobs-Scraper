@@ -26,7 +26,7 @@ function JobsPageContent() {
   const search = searchParams.get("q") ?? "";
   const pageNo = Number(searchParams.get("pageNo") ?? "1");
   const pageSize =10;
-
+  console.log("Search params:", { search, pageNo, pageSize });
   // Only the input's displayed text needs local state, for instant typing feedback
   const [searchInput, setSearchInput] = useState(search);
 
@@ -52,6 +52,7 @@ function JobsPageContent() {
     queryKey: ["jobs", pageNo, search],
     queryFn: () => getJobs(pageNo, pageSize, search),
   });
+  console.log("jobsPage", jobsPage);
 
   return (
     <main className="min-h-screen">
@@ -71,7 +72,7 @@ function JobsPageContent() {
         {isLoading && <JobListSkeleton />}
         {isError && (
           <div className="border border-dashed border-rust/30 rounded-2xl py-16 text-center bg-rust/5">
-            <p className="text-rust font-mono text-sm">Couldn't load jobs. Is the backend running?</p>
+            <p className="text-rust font-mono text-sm">Couldn't load jobs.</p>
           </div>
         )}
         {!isLoading && !isError && jobsPage && (

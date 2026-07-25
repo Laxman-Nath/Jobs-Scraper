@@ -12,8 +12,7 @@ import { LoginFormValues, loginSchema } from "@/lib/validations/authSchema";
 import { AuthCard } from "../../components/auth/AuthCard";
 import { FormField } from "../../components/common/FormField";
 import { getUserRole } from "@/lib/utils/tokenStore";
-import Link from 'next/link'
-
+import Link from "next/link";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -28,18 +27,14 @@ export default function LoginPage() {
     setServerError("");
     try {
       await login(data.email, data.password);
-      if(getUserRole() === "ADMIN") {
+      if (getUserRole() === "ADMIN") {
         router.push("/admin");
+      } else {
+        router.push("/dashboard");
       }
-      else{
-      router.push("/dashboard");
-      }
-    } catch(e: unknown) {
+    } catch (e: unknown) {
       const error = e as { response?: { data?: { message?: string } } };
       setServerError(error.response?.data?.message ?? "Invalid email or password.");
-
-      console.error('Error logging in:', e);
-      setServerError("Invalid email or password.");
     }
   }
 
@@ -53,7 +48,15 @@ export default function LoginPage() {
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
         <FormField label="Email" type="email" placeholder="you@example.com" registration={register("email")} error={errors.email?.message} />
-        <FormField label="Password" type="password" placeholder="••••••••" registration={register("password")} error={errors.password?.message} />
+
+        <div>
+          <FormField label="Password" type="password" placeholder="••••••••" registration={register("password")} error={errors.password?.message} />
+          <div className="flex justify-end mt-1.5">
+            <Link href="/forgot-password" className="text-xs text-muted hover:text-ink transition-colors">
+              Forgot password?
+            </Link>
+          </div>
+        </div>
 
         {serverError && (
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-rust text-sm bg-rust/5 border border-rust/20 rounded-lg px-3 py-2">
@@ -66,9 +69,6 @@ export default function LoginPage() {
           {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />}
         </Button>
       </form>
-      <Link href="/forgot-password" className="text-muted text-xs hover:text-ink self-end mt-10 flex justify-center">
-  Forgot password?
-</Link>
     </AuthCard>
   );
 }

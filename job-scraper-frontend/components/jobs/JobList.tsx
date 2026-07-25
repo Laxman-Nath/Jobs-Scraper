@@ -19,7 +19,7 @@ export function JobList({ jobs, emptyMessage = "No jobs found.",linkPrefix }: Jo
   return (
     <div className="grid gap-3">
       {jobs.map((job, i) => (
-        <JobCard key={job.id} job={job} index={i} href={`${linkPrefix}/${job.id}`} />
+        <JobCard key={job.id} job={job} index={i} href={`${linkPrefix??"/jobs"}/${job.id}`} />
       ))}
     </div>
   );
