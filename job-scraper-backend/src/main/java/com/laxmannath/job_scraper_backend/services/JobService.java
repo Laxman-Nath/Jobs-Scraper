@@ -95,7 +95,7 @@ public class JobService {
 
     @Cacheable(
             value = "jobsList",
-            key = "#pagination.pageNo + '-' + #pagination.pageSize + '-' + (#pagination.sortParameter ?: 'createdAt') + '-' + (#q ?: 'none')"
+            key = "#pagination.pageNo + '-' + #pagination.pageSize + '-' + (#pagination.sortParameter ?: 'createdAt') + '-' + (#searchQuery != null && #searchQuery.trim().length() > 0 ? #searchQuery.trim() : 'none')"
     )
     public PagedResponse<Job> listJobsPaginated(Pagination pagination,String searchQuery) {
         log.info("CACHE MISS — querying DB for jobsList [q={}, page={}, size={}]", searchQuery, pagination.getPageNo(), pagination.getPageSize());
