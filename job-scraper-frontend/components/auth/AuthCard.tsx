@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Briefcase } from "lucide-react";
 import { Logo } from "../layout/Logo";
 
 type AuthCardProps = {
@@ -30,11 +29,7 @@ export function AuthCard({
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="w-full max-w-sm"
       >
-        <div className="flex items-center gap-2 mb-8">
-         <div className="mb-8">
-  <Logo size="md" />
-</div>
-        </div>
+       
 
         <h1 className="font-display font-semibold text-3xl text-ink mb-1">{title}</h1>
         <p className="text-muted text-sm mb-8">{subtitle}</p>
